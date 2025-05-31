@@ -1,14 +1,13 @@
 package Pedido;
 
 import Cofres.*;
-import Colonia.Item;
 
 public abstract class Pedido {
 	protected Cofre cofre;
-	protected Item item;
+	protected String item;
 	protected int cantidad;
 	
-	public Pedido(Cofre cofre, Item item, int cantidad) {
+	public Pedido(Cofre cofre, String item, int cantidad) {
 		this.cofre = cofre;
 		this.item = item;
 		this.cantidad = cantidad;
@@ -26,11 +25,11 @@ public abstract class Pedido {
 		this.cofre = cofre;
 	}
 
-	public Item getItem() {
+	public String getItem() {
 		return item;
 	}
 
-	public void setItem(Item item) {
+	public void setItem(String item) {
 		this.item = item;
 	}
 
@@ -40,5 +39,11 @@ public abstract class Pedido {
 
 	public void setCantidad(int cantidad) {
 		this.cantidad = cantidad;
+	}
+	
+	
+	@Override
+	public String toString() {
+		return "Cofre: " + cofre.getId() + ", Item: " + item + ", Cantidad: " + cantidad;
 	}
 }

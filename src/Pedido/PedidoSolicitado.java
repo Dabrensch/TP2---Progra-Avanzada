@@ -1,10 +1,9 @@
 package Pedido;
 
 import Cofres.Cofre;
-import Colonia.Item;
 
 public class PedidoSolicitado extends Pedido {
-	public PedidoSolicitado(Cofre cofre, Item item, int cantidad) {
+	public PedidoSolicitado(Cofre cofre, String item, int cantidad) {
 		super(cofre, item, cantidad);
 	}
 	

@@ -1,15 +1,20 @@
 package Robot;
 
 public class Bateria {
-	private final int celulasMaximas;
+	private int celulasMaximas;
 	private int celulas;
-	private final int factorConsumo; // cantidad de celulas por unidad de distancia
+	private int factorConsumo; // cantidad de celulas por unidad de distancia
 	
 	public Bateria(int celulasMaximas, int celulas, int factorConsumo) {
 		super();
 		this.celulasMaximas = celulasMaximas;
 		this.celulas = celulas;
 		this.factorConsumo = factorConsumo;
+	}
+	
+	public Bateria() {
+		this.celulasMaximas = 0;
+		this.factorConsumo = 0;
 	}
 
 	public int getCelulasMaximas() {
@@ -31,4 +36,13 @@ public class Bateria {
 	public int celulasNecesarias(double distancia) {
 		return (int) (Math.ceil(distancia) * factorConsumo);
 	}
+	
+	
+	@Override
+    public String toString() {
+        return "Bateria{" +
+                "celulas:" + celulas +
+                "/" + celulasMaximas +
+                '}';
+    }
 }
