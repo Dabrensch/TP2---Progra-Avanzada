@@ -1,0 +1,81 @@
+robopuertos:
+  - ubicacion:
+      x: 5
+      y: 10
+    alcance: 20
+  - ubicacion:
+      x: 10
+      y: 20
+    alcance: 30
+  - ubicacion:
+      x: 0
+      y: 0
+    alcance: 20
+  - ubicacion:
+      x: 220
+      y: 220
+    alcance: 20
+
+robots:
+  - ubicacion:
+      x: 5
+      y: 10
+    capacidad: 10
+    bateria:
+      celulasMaximas: 100
+      celulas: 80
+
+  - ubicacion:
+      x: 0
+      y: 0
+    capacidad: 15
+    bateria:
+      celulasMaximas: 120
+      celulas: 110
+
+cofres:
+  - tipo: activo
+    ubicacion:
+      x: 10
+      y: 20
+    ofrece:
+      itemA: 10
+      itemB: 20
+  - tipo: almacenamiento
+    ubicacion:
+      x: 15
+      y: 25
+    almacenamiento:
+      itemC: 50
+  - tipo: buffer
+    ubicacion:
+      x: 5
+      y: 8
+    ofrece:
+      itemD: 5
+    solicita:
+      itemA: 2
+  - tipo: pasivo
+    ubicacion:
+      x: 12
+      y: 22
+    ofrece:
+      itemE: 8
+  - tipo: solicitud
+    ubicacion:
+      x: 8
+      y: 13
+    solicita:
+      itemF: 15
+  - tipo: solicitud
+    ubicacion:
+      x: 80
+      y: 130
+    solicita:
+      itemF: 2
+  - tipo: activo
+    ubicacion:
+      x: 210
+      y: 205
+    ofrece:
+      itemF: 10
