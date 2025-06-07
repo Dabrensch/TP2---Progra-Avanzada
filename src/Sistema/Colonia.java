@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.File;
 
-
 public class Colonia {
 	// del archivo de entrada:
 	public Set<Cofre> cofres = new HashSet<>();
@@ -21,7 +20,7 @@ public class Colonia {
 
 	// luego de crearRedes():
 	Set<Red> redes = new HashSet<>();
-	
+
 	// identificar cofres sin cobertura
 	Set<Cofre> cofresNoAsignados;
 
@@ -66,37 +65,36 @@ public class Colonia {
 				PriorityQueue<Pedido> ofrecidos = new PriorityQueue<>(
 						Comparator.comparingInt(p -> -p.getCofre().getPrioridad()));
 				Set<Pedido> solicitados = new HashSet<>();
-				
+
 				// Buscar cofres dentro del alcance de esta red
 				Set<Cofre> cofresDeLaRed = new HashSet<>();
-				
-		
+
 				for (Cofre c : cofres) {
 					for (Robopuerto rp : redRobopuertos) {
 						if (rp.estaEnAlcance(c)) {
 							cofresDeLaRed.add(c);
 
-						    // Pedidos ofrecidos
-							if(c.getOfrece() != null) {
+							// Pedidos ofrecidos
+							if (c.getOfrece() != null) {
+
 								for (Map.Entry<String, Integer> entry : c.getOfrece().entrySet()) {
-							    	String item = entry.getKey();
-							        int cantidad = entry.getValue();
-							        Pedido pedido = new PedidoOfrecido(c, item, cantidad); 
-							        ofrecidos.add(pedido);
-							    }
+									String item = entry.getKey();
+									int cantidad = entry.getValue();
+									Pedido pedido = new PedidoOfrecido(c, item, cantidad);
+									ofrecidos.add(pedido);
+								}
 							}
-							
-	
-						    // Pedidos solicitados
-							if(c.getSolicita() != null) {
+
+							// Pedidos solicitados
+							if (c.getSolicita() != null) {
 								for (Map.Entry<String, Integer> entry : c.getSolicita().entrySet()) {
-							    	String item = entry.getKey();
-							        int cantidad = entry.getValue();
-							        Pedido pedido = new PedidoSolicitado(c, item, cantidad); 
-							        solicitados.add(pedido);
-							    }
+									String item = entry.getKey();
+									int cantidad = entry.getValue();
+									Pedido pedido = new PedidoSolicitado(c, item, cantidad);
+									solicitados.add(pedido);
+								}
 							}
-						    
+
 							break;
 						}
 					}
@@ -110,7 +108,6 @@ public class Colonia {
 						robotsDeLaRed.add(r);
 					}
 				}
-
 
 				// Crear la red y agregarla a la colonia
 				Red red = new Red(redRobopuertos, cofresDeLaRed, robotsDeLaRed, ofrecidos, solicitados);
@@ -126,94 +123,90 @@ public class Colonia {
 	}
 
 	public void iniciarSimulacion() {
-		for (Red red : redes) {
-			red.atenderPedidos();
-		}
-		
-		
+		// ver que hacer cuando hay cofres fuera de cobertura
 		if (!cofresNoAsignados.isEmpty()) {
-			System.out.println("Cofres fuera de cobertura: " + cofresNoAsignados);
+			System.out.println("\nCofres fuera de cobertura: " + cofresNoAsignados);
+		}
+
+		for (Red red : redes) {
+			System.out.println("\nRed " + red.getId() + " va a atender los pedidos");
+			red.atenderPedidos();
+			System.out.println("\nRed " + red.getId() + " terminó de atender los pedidos\n");
 		}
 	}
-	
-	
+
 	public void cargarArchivo() {
-	    try {
-	        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+		try {
+			ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
-	        // Ya no es necesario registrar un deserializador para Item
+			// Ya no es necesario registrar un deserializador para Item
 
-	        // Leer el archivo YAML y reemplazar los campos de "this"
-	        Colonia data = mapper.readValue(new File("C://Users//living//Desktop/colonia.yaml"), Colonia.class);
-	        this.robopuertos = data.robopuertos;
-	        this.cofres = data.cofres;
-	        this.robots = data.robots;
+			// Leer el archivo YAML y reemplazar los campos de "this"
+			Colonia data = mapper.readValue(new File("C://Users//living//Desktop/colonia.yaml"), Colonia.class);
+			this.robopuertos = data.robopuertos;
+			this.cofres = data.cofres;
+			this.robots = data.robots;
 
-	        System.out.println("Archivo cargado correctamente.");
-	    } catch (IOException e) {
-	    	e.printStackTrace();
-	        System.err.println("Error al cargar el archivo YAML: " + e.getMessage());
-	        
-	    }
-	    
-	    for (Robot robot : robots) {
-	        for (Robopuerto robopuerto : robopuertos) {
-	            if (robot.getUbicacion().equals(robopuerto.getUbicacion())) {
-	                robot.setRobopuertoInicial(robopuerto);
-	                break;
-	            }
-	        }
-	    }
+			System.out.println("Archivo cargado correctamente.");
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.err.println("Error al cargar el archivo YAML: " + e.getMessage());
+
+		}
+
+		for (Robot robot : robots) {
+			for (Robopuerto robopuerto : robopuertos) {
+				if (robot.getUbicacion().equals(robopuerto.getUbicacion())) {
+					robot.setRobopuertoInicial(robopuerto);
+					break;
+				}
+			}
+		}
 	}
-	
-	
-	
-	
-	
+
 	public static void main(String[] args) {
 		Colonia colonia = new Colonia();
-		
+
 		colonia.cargarArchivo();
-		colonia.crearRedes();
-		
-		//colonia.iniciarSimulacion();
-		
-	
-		// pruebas
+
 		// mostrar entradas
 		System.out.println("\n\nENTRADA");
-		
+
 		System.out.println("\nRobopuertos:");
 		for (Robopuerto robopuerto : colonia.robopuertos) {
-			System.out.println("   "+robopuerto);
+			System.out.println("   " + robopuerto);
 		}
-		
+
 		System.out.println("\nRobots:");
 		for (Robot robot : colonia.robots) {
-			System.out.println("   "+robot);
+			System.out.println("   " + robot);
 		}
-		
+
 		System.out.println("\nCofres:");
 		for (Cofre cofre : colonia.cofres) {
-			System.out.println("   "+cofre);
+			System.out.println("   " + cofre);
 		}
-		
+
+		colonia.crearRedes();
 
 		// mostarr redes
 		System.out.println("\n\nARMAR REDES");
-		
+
 		System.out.println("\nRedes:");
 		for (Red red : colonia.redes) {
 			System.out.println(red);
 		}
-		
-		
+
 		System.out.println("\nCofres no asignados:");
 		for (Cofre cofre : colonia.cofresNoAsignados) {
-			System.out.println("   "+cofre);
+			System.out.println("   " + cofre);
 		}
-		
+
+		// Iniciar simulacion
+		System.out.println("\n\nINICIAR SIMULACION");
+
+		colonia.iniciarSimulacion();
+
 	}
 
-	
 }

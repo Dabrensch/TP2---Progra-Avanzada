@@ -1,81 +1,116 @@
 robopuertos:
   - ubicacion:
-      x: 5
-      y: 10
-    alcance: 20
-  - ubicacion:
-      x: 10
-      y: 20
-    alcance: 30
-  - ubicacion:
       x: 0
       y: 0
     alcance: 20
+
   - ubicacion:
-      x: 220
-      y: 220
+      x: 20
+      y: 20
+    alcance: 10
+
+  - ubicacion:
+      x: -25
+      y: 5
     alcance: 20
+
+  - ubicacion:
+      x: -30
+      y: 40
+    alcance: 10
+
+  - ubicacion:
+      x: -10
+      y: 60
+    alcance: 20
+
+  - ubicacion:
+      x: 30
+      y: 50
+    alcance: 10
+
 
 robots:
   - ubicacion:
-      x: 5
-      y: 10
-    capacidad: 10
-    bateria:
-      celulasMaximas: 100
-      celulas: 80
-
-  - ubicacion:
       x: 0
       y: 0
-    capacidad: 15
+    capacidad: 100
     bateria:
-      celulasMaximas: 120
-      celulas: 110
+      celulasMaximas: 100
+      celulas: 100
+
+  - ubicacion:
+      x: 20
+      y: 20
+    capacidad: 100
+    bateria:
+      celulasMaximas: 100
+      celulas: 100
+
 
 cofres:
   - tipo: activo
     ubicacion:
-      x: 10
-      y: 20
+      x: -20
+      y: 70
     ofrece:
       itemA: 10
       itemB: 20
+
   - tipo: almacenamiento
     ubicacion:
-      x: 15
-      y: 25
+      x: -40
+      y: 10
     almacenamiento:
       itemC: 50
+
   - tipo: buffer
     ubicacion:
-      x: 5
-      y: 8
+      x: 30
+      y: 20
     ofrece:
       itemD: 5
     solicita:
       itemA: 2
+
   - tipo: pasivo
     ubicacion:
-      x: 12
-      y: 22
+      x: 25
+      y: 25
     ofrece:
       itemE: 8
+
   - tipo: solicitud
     ubicacion:
-      x: 8
-      y: 13
+      x: 5
+      y: 5
     solicita:
       itemF: 15
+
   - tipo: solicitud
     ubicacion:
-      x: 80
-      y: 130
+      x: 5
+      y: -15
     solicita:
       itemF: 2
+
   - tipo: activo
     ubicacion:
-      x: 210
-      y: 205
+      x: -10
+      y: 5
+    ofrece:
+      itemF: 10
+
+  - tipo: activo
+    ubicacion:
+      x: -20
+      y: 20
+    ofrece:
+      itemF: 10
+
+  - tipo: activo
+    ubicacion:
+      x: 0
+      y: 30
     ofrece:
       itemF: 10

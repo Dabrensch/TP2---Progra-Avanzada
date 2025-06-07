@@ -63,9 +63,9 @@ public class Robot {
 	@Override
 	public String toString() {
 	    return "Robot: "+ id +
-	            ", ubicacion:" + ubicacion +
-	            ", capacidad:" + capacidad +
-	            ", bateria:" + bateria +
+	            ", ubicacion: " + ubicacion +
+	            ", capacidad: " + capacidad +
+	            ", bateria: " + bateria +
 	            ", robopuertoInicial: " + robopuertoInicial.getId();
 	}
 
