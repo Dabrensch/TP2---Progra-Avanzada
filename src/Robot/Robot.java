@@ -10,8 +10,8 @@ public class Robot {
     
 	private Coordenada ubicacion;
 	private Robopuerto robopuertoInicial;
-	public int capacidad;
-	public Bateria bateria;
+	private int capacidad;
+	private Bateria bateria;
 	
 	
 	public Robot() {
@@ -57,6 +57,18 @@ public class Robot {
 
 	public Coordenada getUbicacion() {
 		return ubicacion;
+	}
+	
+	public int getId() {
+		return id;
+	}
+	
+	public Bateria getBateria() {
+		return bateria;
+	}
+	
+	public int getCapacidad() {
+		return capacidad;
 	}
 
 	

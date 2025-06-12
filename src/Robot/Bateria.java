@@ -3,18 +3,17 @@ package Robot;
 public class Bateria {
 	private int celulasMaximas;
 	private int celulas;
-	private int factorConsumo; // cantidad de celulas por unidad de distancia
+	private int factorConsumo = 1; // cantidad de celulas por unidad de distancia
 	
-	public Bateria(int celulasMaximas, int celulas, int factorConsumo) {
-		super();
+	public Bateria(int celulasMaximas) {
 		this.celulasMaximas = celulasMaximas;
-		this.celulas = celulas;
-		this.factorConsumo = factorConsumo;
+		this.celulas = celulasMaximas;
 	}
 	
 	public Bateria() {
 		this.celulasMaximas = 0;
 		this.factorConsumo = 0;
+		this.celulas = 0;
 	}
 
 	public int getCelulasMaximas() {

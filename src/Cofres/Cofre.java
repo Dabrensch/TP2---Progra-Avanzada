@@ -37,7 +37,11 @@ public abstract class Cofre {
 		this.ofrece = ofrece;
 		this.solicita = solicita;
 		this.almacenamiento = almacenamiento;
+		
+		validar();
 	}
+	
+	protected abstract void validar();
 
 	public void quitarItem(String item, int cantidad) {
 		if (ofrece.containsKey(item)) {

@@ -11,12 +11,12 @@ public class Red {
 	private static int contador = 1;
     private final int id;
     
-	Set<Cofre> cofres = new HashSet<>();
-	Set<Robot> robots = new HashSet<>();
-	Set<Robopuerto> robopuertos = new HashSet<>();
+    private Set<Cofre> cofres = new HashSet<>();
+    private Set<Robot> robots = new HashSet<>();
+    private Set<Robopuerto> robopuertos = new HashSet<>();
 	
-	Set<Pedido> solicitados;
-	PriorityQueue<Pedido> ofrecidos;
+    private Set<Pedido> solicitados;
+    private PriorityQueue<Pedido> ofrecidos;
 	
 
 
@@ -41,15 +41,15 @@ public class Red {
 			Cofre cofreOfrecido = ofrecido.getCofre();
 			String item = ofrecido.getItem();
 			
-			System.out.println("\nUn cofre ofreció el siguiente pedido: " + ofrecido);
+			System.out.println("\nEl cofre " + ofrecido.getCofre().getId() + " ofreció " + ofrecido.getCantidad() + " unidades de " + ofrecido.getItem() + ".");
+
 			
 			for (Pedido solicitado : solicitados) {
 				// recorrer las solicitudes en busca de un cofre que solicite el item del pedido
 				if(solicitado.getItem().equals(item) == true && solicitado.getCantidad() != 0) {
-					System.out.println("Solicitaron el pedido ofrecido: " + solicitado);
-					
-					
-					int cantidad = Math.min(ofrecido.getCantidad(), solicitado.getCantidad()); // hay que aplicar alguna logica para saber que cantidad retirar y entregar
+					System.out.println("El cofre " + solicitado.getCofre().getId() + " solicitó " + solicitado.getCantidad() + " unidades de " + solicitado.getItem() + ".");
+
+					int cantidad = Math.min(ofrecido.getCantidad(), solicitado.getCantidad()); // logica para saber que cantidad retirar y entregar
 					
 					Cofre cofreSolicitado = solicitado.getCofre();
 					
@@ -57,32 +57,56 @@ public class Red {
 					// Que sea el mas cercado al cofre que ofrece y que tenga suficiente bateria para completar el pedido, aunque sea pasando por un lugar de carga
 					Robot robot = robots.iterator().next();
 					
-					System.out.println("El robot " + robot + " va a realizar el pedido");
+					// verificar cuantos viajes debe hacer segun su capacidad maxima
+					int viajes = 1;
+					while(robot.getCapacidad() < cantidad) {
+						cantidad -= robot.getCapacidad();
+						viajes ++;
+					}
 					
-					// aca se aplica la logica de buscar y entregar, aca hay que agregar la busqueda de la mejor ruta para el robot, teniendo en cuenta los diferentes caminos y sus distancias y la bateria del robot
-					robot.moverA(cofreOfrecido);
-					robot.cargarItem(cofreOfrecido, item, cantidad);
-					robot.moverA(cofreSolicitado);
-					robot.descargarItem(cofreSolicitado, item, cantidad);
 					
-					// tambien hay que cambiar los vectores de ofrece, solicita y inventario de cada robot
+					if(viajes > 1) {
+						System.out.println("El robot " + robot.getId() + " va a realizar el pedido. Debe realizar " + viajes + " viajes debido a su capacidad de carga.");
+					} else {
+						System.out.println("El robot " + robot.getId() + " va a realizar el pedido.");
+					}
+					
+					for (int i = 0; i < viajes; i++) {
+						if(viajes > 1) {
+							cantidad = Math.min(robot.getCapacidad(), Math.min(ofrecido.getCantidad(), solicitado.getCantidad()));
+						} else {
+							cantidad = Math.min(ofrecido.getCantidad(), solicitado.getCantidad());
+						}
+						
+						
+						// aca se aplica la logica de buscar y entregar, aca hay que agregar la busqueda de la mejor ruta para el robot, teniendo en cuenta los diferentes caminos y sus distancias y la bateria del robot
+						robot.moverA(cofreOfrecido);
+						robot.cargarItem(cofreOfrecido, item, cantidad);
+						robot.moverA(cofreSolicitado);
+						robot.descargarItem(cofreSolicitado, item, cantidad);
+					}
+						
+					
+					
+					
+					// tambien hay que cambiar los vectores de ofrece, solicita y inventario de cada cofre
 					if(solicitado.getCantidad() - cantidad == 0) {
 						
 						solicitado.setCantidad(0); // ya no hay solicitados
 						
 						// comprobar si quedan items para ofrecer
 						if(ofrecido.getCantidad() - cantidad == 0) {
-							System.out.println("Se completó todo el pedido");
+							System.out.println("Se completó todo el pedido.");
 							
 							ofrecido.setCantidad(0);
 							break; // no hay solicitados ni ofrecidos, se cumplieron ambos pedidos
 						} else {
-							System.out.println("Se completó toda la solicitud, pero faltan items para ofrecer");
+							System.out.println("Se completó toda la solicitud, pero faltan items para ofrecer.");
 							
 							ofrecido.setCantidad(ofrecido.getCantidad() - cantidad); // faltan ofrecidos, se sigue iterando
 						}
 					} else {
-						System.out.println("Se ofrecieron todos los items, pero faltan items solicitados");
+						System.out.println("Se ofrecieron todos los items, pero faltan items solicitados.");
 
 						ofrecido.setCantidad(0);
 						solicitado.setCantidad(solicitado.getCantidad() - cantidad); // se ofrecieron todos los items pero faltan solicitados
@@ -94,10 +118,13 @@ public class Red {
 			}
 			
 			if(ofrecido.getCantidad() != 0) {
-				System.out.println("\nQuedaron sin ofrecer: " + ofrecido);
+				System.out.print("No se pudó completar todo el pedido del cofre " + ofrecido.getCofre().getId() + ", quedaron " + ofrecido.getCantidad() + " unidades de " + ofrecido.getItem() + " sin ofrecer por falta de solicitudes. ");
 				// hay que llevar lo que quedo a un cofre de inventario, solo si es un cofre activo
 				// hay que agregar una logica para saber a que cofre de inventario llevarlo
 				// si en esta situacion no hay cofre de inventario entonces el sistema no tiene solucion
+				
+			//	Robot robot = robots.iterator().next();
+				System.out.println("El robot X va a llevar el exceso al cofre de inventario X.");
 			}
 			
 		}

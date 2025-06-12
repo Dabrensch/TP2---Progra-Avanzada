@@ -123,15 +123,14 @@ public class Colonia {
 	}
 
 	public void iniciarSimulacion() {
+		for (Red red : redes) {
+			System.out.println("\n------ La red " + red.getId() + " va a atender los pedidos ------");
+			red.atenderPedidos();
+		}
+
 		// ver que hacer cuando hay cofres fuera de cobertura
 		if (!cofresNoAsignados.isEmpty()) {
 			System.out.println("\nCofres fuera de cobertura: " + cofresNoAsignados);
-		}
-
-		for (Red red : redes) {
-			System.out.println("\nRed " + red.getId() + " va a atender los pedidos");
-			red.atenderPedidos();
-			System.out.println("\nRed " + red.getId() + " terminó de atender los pedidos\n");
 		}
 	}
 
@@ -147,6 +146,18 @@ public class Colonia {
 			this.cofres = data.cofres;
 			this.robots = data.robots;
 
+			for (Robot robot : robots) {
+				for (Robopuerto robopuerto : robopuertos) {
+					if (robot.getUbicacion().equals(robopuerto.getUbicacion())) {
+						robot.setRobopuertoInicial(robopuerto);
+						break;
+					}
+					// fallar si no esta en un robopuerto
+				}
+
+				robot.getBateria().recargar();
+			}
+
 			System.out.println("Archivo cargado correctamente.");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -154,14 +165,8 @@ public class Colonia {
 
 		}
 
-		for (Robot robot : robots) {
-			for (Robopuerto robopuerto : robopuertos) {
-				if (robot.getUbicacion().equals(robopuerto.getUbicacion())) {
-					robot.setRobopuertoInicial(robopuerto);
-					break;
-				}
-			}
-		}
+		// agregar validacion de que los cofres tengan ofrecidos solo si pueden ofrecer
+		// y tengan solicitados solo si pueden solicitar
 	}
 
 	public static void main(String[] args) {
@@ -169,41 +174,29 @@ public class Colonia {
 
 		colonia.cargarArchivo();
 
-		// mostrar entradas
-		System.out.println("\n\nENTRADA");
+		// mostrar entradas System.out.println("\n\nENTRADA");
 
-		System.out.println("\nRobopuertos:");
-		for (Robopuerto robopuerto : colonia.robopuertos) {
-			System.out.println("   " + robopuerto);
-		}
-
-		System.out.println("\nRobots:");
-		for (Robot robot : colonia.robots) {
-			System.out.println("   " + robot);
-		}
-
-		System.out.println("\nCofres:");
-		for (Cofre cofre : colonia.cofres) {
-			System.out.println("   " + cofre);
-		}
+//		 System.out.println("\nRobopuertos:"); for (Robopuerto robopuerto :
+//		 colonia.robopuertos) { System.out.println("   " + robopuerto); }
+//		 
+//		 System.out.println("\nRobots:"); for (Robot robot : colonia.robots) {
+//		 System.out.println("   " + robot); }
+//		 
+//		 System.out.println("\nCofres:"); for (Cofre cofre : colonia.cofres) {
+//		 System.out.println("   " + cofre); }
 
 		colonia.crearRedes();
-
-		// mostarr redes
-		System.out.println("\n\nARMAR REDES");
-
-		System.out.println("\nRedes:");
-		for (Red red : colonia.redes) {
-			System.out.println(red);
-		}
-
-		System.out.println("\nCofres no asignados:");
-		for (Cofre cofre : colonia.cofresNoAsignados) {
-			System.out.println("   " + cofre);
-		}
-
-		// Iniciar simulacion
-		System.out.println("\n\nINICIAR SIMULACION");
+		/*
+		 * // mostarr redes System.out.println("\n\nARMAR REDES");
+		 * 
+		 * System.out.println("\nRedes:"); for (Red red : colonia.redes) {
+		 * System.out.println(red); }
+		 * 
+		 * System.out.println("\nCofres no asignados:"); for (Cofre cofre :
+		 * colonia.cofresNoAsignados) { System.out.println("   " + cofre); }
+		 * 
+		 * // Iniciar simulacion System.out.println("\n\nINICIAR SIMULACION");
+		 */
 
 		colonia.iniciarSimulacion();
 
