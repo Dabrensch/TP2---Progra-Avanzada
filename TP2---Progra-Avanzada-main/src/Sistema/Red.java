@@ -58,9 +58,9 @@ public class Red {
 			}
 		}
 	}
-	
-	private Robopuerto robopuertoIntermedioV2(Bateria bateria, Coordenada ubicacion, Cofre cofre) {
-		Set<Robopuerto> robopuertos = this.robopuertos;
+
+	private Robopuerto robopuertoIntermedio(Bateria bateria, Coordenada ubicacion, Cofre cofre) {
+		Set<Robopuerto> robopuertos = new HashSet<>(this.robopuertos);
 		int n = robopuertos.size();
 
 		while (!robopuertos.isEmpty()) {
@@ -76,13 +76,13 @@ public class Red {
 
 		return null;
 	}
-	
+
 	private Set<Nodo> rutaRobot(Cofre origen, Cofre destino, Robot robot) {
 		Set<Nodo> nodos = new LinkedHashSet<>();
-		
+
 		Bateria bateria = new Bateria(robot.getBateria().getCelulasMaximas());
 		Coordenada ubicacion = new Coordenada(robot.getUbicacion().getX(), robot.getUbicacion().getY());
-		
+
 		Robopuerto robopuertoOrigen = robopuertoMasCercanoACofre(origen, robopuertos);
 		Robopuerto robopuertoDestino = robopuertoMasCercanoACofre(destino, robopuertos);
 
@@ -94,10 +94,10 @@ public class Red {
 
 			// pasar por nodos intermedios
 
-			Robopuerto robopuertoIntermedio = robopuertoIntermedioV2(bateria, ubicacion, origen);
-			if(robopuertoIntermedio == null)
+			Robopuerto robopuertoIntermedio = robopuertoIntermedio(bateria, ubicacion, origen);
+			if (robopuertoIntermedio == null)
 				return null;
-			
+
 			ubicacion.setXY(robopuertoIntermedio.getUbicacion().getX(), robopuertoIntermedio.getUbicacion().getY());
 			bateria.recargar();
 			nodos.add(new NodoRobopuerto(robopuertoIntermedio));
@@ -107,19 +107,15 @@ public class Red {
 		ubicacion.setXY(origen.getUbicacion().getX(), origen.getUbicacion().getY());
 		nodos.add(new NodoCofre(origen));
 
-
 		// ver si llega al destino
-		while (bateria.getCelulas() < (bateria
-				.celulasNecesarias(ubicacion.distanciaA(destino.getUbicacion()))
-				+ bateria.celulasNecesarias(
-						destino.getUbicacion().distanciaA(robopuertoDestino.getUbicacion())))) {
+		while (bateria.getCelulas() < (bateria.celulasNecesarias(ubicacion.distanciaA(destino.getUbicacion()))
+				+ bateria.celulasNecesarias(destino.getUbicacion().distanciaA(robopuertoDestino.getUbicacion())))) {
 
 			// pasar por nodos intermedios
 
-			Robopuerto robopuertoIntermedio = robopuertoIntermedioV2(bateria, ubicacion, destino);
-			if(robopuertoIntermedio == null)
+			Robopuerto robopuertoIntermedio = robopuertoIntermedio(bateria, ubicacion, destino);
+			if (robopuertoIntermedio == null)
 				return null;
-			
 
 			ubicacion.setXY(robopuertoIntermedio.getUbicacion().getX(), robopuertoIntermedio.getUbicacion().getY());
 			bateria.recargar();
@@ -129,25 +125,35 @@ public class Red {
 		nodos.add(new NodoCofre(destino));
 		nodos.add(new NodoRobopuerto(robopuertoDestino));
 
-		
 		return nodos;
-		
+
 	}
 
-	private Robot planearRuta(Cofre origen, Cofre destino, Set<Robot> robots) {
+	private Map<Robot, Set<Nodo>> planearRuta(Cofre origen, Cofre destino) {
+		Set<Robot> robots = new HashSet<>(this.robots);
 		int n = robots.size();
 
 		Robot elegido;
 
+		Map<Robot, Set<Nodo>> salida = new HashMap<>();
+
 		for (int i = 0; i < n; i++) {
 			elegido = elegirRobotMasCercano(origen, robots);
+			
 
 			Set<Nodo> ruta = rutaRobot(origen, destino, elegido);
+
+
 			
 			if (ruta == null) {
 				robots.remove(elegido);
-			} else
-				return elegido;
+			} else {
+				
+				salida.put(elegido, ruta);
+				
+				return salida;
+			}
+				
 		}
 
 		return null;
@@ -186,26 +192,7 @@ public class Red {
 		return masCercano;
 	}
 
-	private Robopuerto robopuertoIntermedio(Robot robot, Cofre cofre) {
-		Set<Robopuerto> robopuertos = this.robopuertos;
-		int n = robopuertos.size();
-
-		while (!robopuertos.isEmpty()) {
-			Robopuerto robopuertoIntermedio = robopuertoMasCercanoACofre(cofre, robopuertos);
-
-			if (robot.getBateria().getCelulas() >= robot.getBateria()
-					.celulasNecesarias(robot.getUbicacion().distanciaA(robopuertoIntermedio.getUbicacion()))) {
-				return robopuertoIntermedio;
-			} else {
-				robopuertos.remove(robopuertoIntermedio);
-			}
-		}
-
-		return null;
-	}
-
 	public void atenderPedidos() {
-		// Esto no contempla carga del robot, ni capacidad de carga. hay que agregarlo.
 
 		if (robots.isEmpty()) {
 			System.out.println("NO HAY ROBOTS");
@@ -233,14 +220,17 @@ public class Red {
 					int cantidad = 0;
 
 					while (true) {
-						Robot robot = elegirRobotMasCercano(cofreOfrecido, robots); // elige al robot mas cercano al
-																					// cofre de origen, hay que agregar
-																					// que si este no puede llegar elija
-																					// al siguiente mas cercano y asi
-																					// sucesivamente hasta que pueda
 
-						// abria que intentar con todos los robots lo que hay ams abajo pero de forma
-						// simulada para ver si llegan a algo
+						Map<Robot, Set<Nodo>> ruta = planearRuta(cofreOfrecido, cofreSolicitado);
+						
+						if(ruta == null) 
+							throw new IllegalArgumentException("NINGUN ROBOT LLEGA");
+						
+						
+						Map.Entry<Robot, Set<Nodo>> entrada = ruta.entrySet().iterator().next();
+						
+						Robot robot = entrada.getKey();
+						Set<Nodo> nodos = entrada.getValue();
 
 						System.out.print("\t\tEl robot " + robot.getId() + " va a realizar el pedido. ");
 
@@ -254,86 +244,40 @@ public class Red {
 						System.out.println("\t\t\t\tUbicacion actual: " + robot.getUbicacion() + ", Bateria actual: "
 								+ robot.getBateria());
 
-						// ------ BATERIA ------
+						for (Nodo nodo : nodos) {
+							if (nodo.esRobopuerto()) {
+								Robopuerto robopuertoIntermedio = ((NodoRobopuerto) nodo).getContenido();
+								System.out.print("\t\t\tVa a cargarse al robopuerto " + robopuertoIntermedio.getId()
+										+ " en " + robopuertoIntermedio.getUbicacion());
+								robot.moverA(robopuertoIntermedio);
+							} else {
+								Cofre cofre = ((NodoCofre) nodo).getContenido();
+								if (cofre.equals(cofreOfrecido)) {
+									robot.moverA(cofreOfrecido);
+									robot.cargarItem(cofreOfrecido, item, cantidad);
 
-						// comprobar si llega al cofre origen (cofreOfrecido) +
-						// distanciaARobopuertoOrigen
-						// si llega ir directamente
-						// si no llega buscar el robopuerto intermedio mas cercano al cofre que llegue
-						// el robot con su bateria
-						// asi sucesivamente hasta poder llegar al origen
+									System.out.print("\t\t\tAgarro los items que ofreció el cofre");
+									System.out.println("\t\t\t\tUbicacion actual: " + robot.getUbicacion()
+											+ ", Bateria actual: " + robot.getBateria());
+								} else {
+									robot.moverA(cofreSolicitado);
+									robot.descargarItem(cofreSolicitado, item, cantidad);
 
-						// comprobar si llega al cofre destino (cofreSolicitado) +
-						// distanciaArobopuertoDestino
-						// si llega ir directamente
-						// si no llega buscar el robopuerto intermedio mas cercano al cofre que llegue
-						// el robot con su bateria
-						// asi sucesivamente hasta poder llegar al destino
-						// luego ir al robopuerto destino
-
-						Robopuerto robopuertoOrigen = robopuertoMasCercanoACofre(cofreOfrecido, robopuertos);
-						Robopuerto robopuertoDestino = robopuertoMasCercanoACofre(cofreSolicitado, robopuertos);
-
-						// puede haber un loop infinito, solucionarlo
-
-						// ver si llega al origen
-						while (robot.getBateria().getCelulas() < (robot.getBateria()
-								.celulasNecesarias(robot.getUbicacion().distanciaA(cofreOfrecido.getUbicacion()))
-								+ robot.getBateria().celulasNecesarias(
-										cofreOfrecido.getUbicacion().distanciaA(robopuertoOrigen.getUbicacion())))) {
-
-							// pasar por nodos intermedios
-
-							Robopuerto robopuertoIntermedio = robopuertoIntermedio(robot, cofreOfrecido);
-							System.out.print("\t\t\tVa a cargarse al robopuerto " + robopuertoIntermedio.getId()
-									+ " en " + robopuertoIntermedio.getUbicacion());
-							robot.moverA(robopuertoIntermedio);
+									System.out.print("\t\t\tDejo los items que solicitó el cofre");
+									System.out.println("\t\t\t\tUbicacion actual: " + robot.getUbicacion()
+											+ ", Bateria actual: " + robot.getBateria());
+								}
+							}
 
 						}
-						// Ir al origen
-						robot.moverA(cofreOfrecido);
-						robot.cargarItem(cofreOfrecido, item, cantidad);
-
-						System.out.print("\t\t\tAgarro los items que ofreció el cofre");
-						System.out.println("\t\t\t\tUbicacion actual: " + robot.getUbicacion() + ", Bateria actual: "
-								+ robot.getBateria());
-
-						// ver si llega al destino
-						while (robot.getBateria().getCelulas() < (robot.getBateria()
-								.celulasNecesarias(robot.getUbicacion().distanciaA(cofreSolicitado.getUbicacion()))
-								+ robot.getBateria().celulasNecesarias(
-										cofreSolicitado.getUbicacion().distanciaA(robopuertoDestino.getUbicacion())))) {
-
-							// pasar por nodos intermedios
-
-							Robopuerto robopuertoIntermedio = robopuertoIntermedio(robot, cofreSolicitado);
-
-							System.out.print("\t\t\tVa a cargarse al robopuerto " + robopuertoIntermedio.getId()
-									+ " en " + robopuertoIntermedio.getUbicacion());
-							robot.moverA(robopuertoIntermedio);
-
-						}
-						// Ir al destino
-						robot.moverA(cofreSolicitado);
-						robot.descargarItem(cofreSolicitado, item, cantidad);
-
-						System.out.print("\t\t\tDejo los items que solicitó el cofre");
-						System.out.println("\t\t\t\tUbicacion actual: " + robot.getUbicacion() + ", Bateria actual: "
-								+ robot.getBateria());
-
-						// Ir al robopuerto destino
-						System.out.print("\t\t\tVa a cargarse al robopuerto " + robopuertoDestino.getId() + " en "
-								+ robopuertoDestino.getUbicacion() + ". ");
-						robot.moverA(robopuertoDestino); // se recarga automaticamente
 
 						if (solicitado.getCantidad() != cantidad && ofrecido.getCantidad() != cantidad) {
 							System.out.println("\t\tFaltan ofrecidos y solicitados.");
 
 							ofrecido.setCantidad(ofrecido.getCantidad() - cantidad);
 							solicitado.setCantidad(solicitado.getCantidad() - cantidad);
-						} else {
+						} else
 							break;
-						}
 
 					}
 
