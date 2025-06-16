@@ -1,6 +1,9 @@
 package Robot;
 
+import java.security.InvalidParameterException;
 import java.util.*;
+
+import javax.swing.DefaultRowSorter;
 
 import Cofres.*;
 import General.*;
@@ -23,6 +26,9 @@ public class Robot {
 	}
 	
 	public Robot(Coordenada ubicacion, Robopuerto robopuertoInicial, int capacidad, Bateria bateria) {
+		if(robopuertoInicial == null || capacidad <= 0 || bateria == null)
+			throw new InvalidParameterException("Argumentos ivalidos");
+		
 		this.id = contador++;
 		this.ubicacion = ubicacion;
 		this.robopuertoInicial = robopuertoInicial;

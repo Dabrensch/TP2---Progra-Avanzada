@@ -19,9 +19,9 @@ robots:
   - ubicacion:
       x: -25
       y: 5
-    capacidad: 5
+    capacidad: 10
     bateria:
-      celulasMaximas: 60
+      celulasMaximas: 80
 
   - ubicacion:
       x: 20
@@ -32,6 +32,11 @@ robots:
 
 
 cofres:
+  - tipo: almacenamiento
+    ubicacion:
+      x: 10
+      y: 10
+
   - tipo: activo
     ubicacion:
       x: -40

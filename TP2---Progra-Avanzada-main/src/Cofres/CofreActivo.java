@@ -13,6 +13,10 @@ public class CofreActivo extends Cofre {
             throw new IllegalArgumentException("Un cofre activo no puede almacenar");
     }
 	
+	@Override
+	public boolean esActivo() {
+		return true;
+	}
 	
 	@Override
     public String toString() {

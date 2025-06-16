@@ -6,6 +6,9 @@ public class Bateria {
 	private int factorConsumo = 1; // cantidad de celulas por unidad de distancia
 	
 	public Bateria(int celulasMaximas) {
+		if(celulasMaximas <= 0)
+			throw new IllegalArgumentException("Argumentos invalidos");
+		
 		this.celulasMaximas = celulasMaximas;
 		this.celulas = celulasMaximas;
 	}
@@ -21,6 +24,13 @@ public class Bateria {
 
 	public int getCelulas() {
 		return celulas;
+	}
+	
+	public void setCelulasMaximas(int celulasMaximas) {
+		if(celulasMaximas <= 0)
+			throw new IllegalArgumentException("Argumentos invalidos");
+		
+		this.celulasMaximas = celulasMaximas;
 	}
 
 	public void recargar() {

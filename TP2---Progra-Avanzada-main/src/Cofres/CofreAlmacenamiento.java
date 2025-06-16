@@ -10,6 +10,11 @@ public class CofreAlmacenamiento extends Cofre {
     }
 	
 	@Override
+	public boolean almacena() {
+		return true;
+	}
+	
+	@Override
     public String toString() {
         return "CofreAlmacenamiento: "+ id + super.toString() + ", almacenamiento: " + almacenamiento;
     }

@@ -142,7 +142,7 @@ public class Colonia {
 
 			// Leer el archivo YAML y reemplazar los campos de "this"
 			Colonia data = mapper.readValue(
-					new File("C://Users//Brenda//eclipse-workspace//TP2---Progra-Avanzada-main//colonia.yaml"),
+					new File("C://Users//living//eclipse-workspace//TP2---Progra-Avanzada-main//colonia.yaml"),
 					Colonia.class);
 			this.robopuertos = data.robopuertos;
 			this.cofres = data.cofres;
@@ -162,7 +162,6 @@ public class Colonia {
 
 			System.out.println("Archivo cargado correctamente.");
 		} catch (IOException e) {
-			e.printStackTrace();
 			System.err.println("Error al cargar el archivo YAML: " + e.getMessage());
 
 		}

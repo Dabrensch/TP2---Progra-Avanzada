@@ -81,6 +81,14 @@ public abstract class Cofre {
 	public boolean solicita() {
 		return !solicita.isEmpty();
 	}
+	
+	public boolean almacena() {
+		return false;
+	}
+	
+	public boolean esActivo() {
+		return false;
+	}
 
 	public Map<String, Integer> getOfrece() {
 		return ofrece;

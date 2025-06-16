@@ -59,18 +59,19 @@ public class Red {
 		}
 	}
 
-	private Robopuerto robopuertoIntermedio(Bateria bateria, Coordenada ubicacion, Cofre cofre) {
-		Set<Robopuerto> robopuertos = new HashSet<>(this.robopuertos);
-		int n = robopuertos.size();
+	private Robopuerto robopuertoIntermedio(Bateria bateria, Coordenada ubicacion, Cofre cofre,
+			Set<Robopuerto> robopuertos) {
+		Set<Robopuerto> robopuertos2 = new HashSet<>(robopuertos);
+		int n = robopuertos2.size();
 
-		while (!robopuertos.isEmpty()) {
-			Robopuerto robopuertoIntermedio = robopuertoMasCercanoACofre(cofre, robopuertos);
+		while (!robopuertos2.isEmpty()) {
+			Robopuerto robopuertoIntermedio = robopuertoMasCercanoACofre(cofre, robopuertos2);
 
 			if (bateria.getCelulas() >= bateria
 					.celulasNecesarias(ubicacion.distanciaA(robopuertoIntermedio.getUbicacion()))) {
 				return robopuertoIntermedio;
 			} else {
-				robopuertos.remove(robopuertoIntermedio);
+				robopuertos2.remove(robopuertoIntermedio);
 			}
 		}
 
@@ -86,6 +87,8 @@ public class Red {
 		Robopuerto robopuertoOrigen = robopuertoMasCercanoACofre(origen, robopuertos);
 		Robopuerto robopuertoDestino = robopuertoMasCercanoACofre(destino, robopuertos);
 
+		Set<Robopuerto> robopuertos = new HashSet<>(this.robopuertos);
+
 		// puede haber un loop infinito, solucionarlo
 
 		// ver si llega al origen
@@ -94,13 +97,14 @@ public class Red {
 
 			// pasar por nodos intermedios
 
-			Robopuerto robopuertoIntermedio = robopuertoIntermedio(bateria, ubicacion, origen);
+			Robopuerto robopuertoIntermedio = robopuertoIntermedio(bateria, ubicacion, origen, robopuertos);
 			if (robopuertoIntermedio == null)
 				return null;
 
 			ubicacion.setXY(robopuertoIntermedio.getUbicacion().getX(), robopuertoIntermedio.getUbicacion().getY());
 			bateria.recargar();
 			nodos.add(new NodoRobopuerto(robopuertoIntermedio));
+			robopuertos.remove(robopuertoIntermedio);
 		}
 		// Ir al origen
 		bateria.descargar(bateria.celulasNecesarias(ubicacion.distanciaA(origen.getUbicacion())));
@@ -108,18 +112,20 @@ public class Red {
 		nodos.add(new NodoCofre(origen));
 
 		// ver si llega al destino
+		robopuertos.addAll(this.robopuertos);
 		while (bateria.getCelulas() < (bateria.celulasNecesarias(ubicacion.distanciaA(destino.getUbicacion()))
 				+ bateria.celulasNecesarias(destino.getUbicacion().distanciaA(robopuertoDestino.getUbicacion())))) {
 
 			// pasar por nodos intermedios
 
-			Robopuerto robopuertoIntermedio = robopuertoIntermedio(bateria, ubicacion, destino);
+			Robopuerto robopuertoIntermedio = robopuertoIntermedio(bateria, ubicacion, destino, robopuertos);
 			if (robopuertoIntermedio == null)
 				return null;
 
 			ubicacion.setXY(robopuertoIntermedio.getUbicacion().getX(), robopuertoIntermedio.getUbicacion().getY());
 			bateria.recargar();
 			nodos.add(new NodoRobopuerto(robopuertoIntermedio));
+			robopuertos.remove(robopuertoIntermedio);
 		}
 		// Ir al destino
 		nodos.add(new NodoCofre(destino));
@@ -139,21 +145,15 @@ public class Red {
 
 		for (int i = 0; i < n; i++) {
 			elegido = elegirRobotMasCercano(origen, robots);
-			
 
 			Set<Nodo> ruta = rutaRobot(origen, destino, elegido);
 
-
-			
 			if (ruta == null) {
 				robots.remove(elegido);
 			} else {
-				
 				salida.put(elegido, ruta);
-				
 				return salida;
 			}
-				
 		}
 
 		return null;
@@ -192,6 +192,39 @@ public class Red {
 		return masCercano;
 	}
 
+	private void atenderPedido(Robot robot, Set<Nodo> ruta, Cofre cofreOfrecido, Cofre cofreSolicitado, String item,
+			int cantidad) {
+		System.out.println("\t\t\t\tUbicacion actual: " + robot.getUbicacion() + ", Bateria actual: "
+				+ robot.getBateria() + ", Capacidad: " + robot.getCapacidad());
+
+		for (Nodo nodo : ruta) {
+			if (nodo.esRobopuerto()) {
+				Robopuerto robopuertoIntermedio = ((NodoRobopuerto) nodo).getContenido();
+				System.out.print("\t\t\tVa a cargarse al robopuerto " + robopuertoIntermedio.getId() + " en "
+						+ robopuertoIntermedio.getUbicacion());
+				robot.moverA(robopuertoIntermedio);
+			} else {
+				Cofre cofre = ((NodoCofre) nodo).getContenido();
+				if (cofre.equals(cofreOfrecido)) {
+					robot.moverA(cofreOfrecido);
+					robot.cargarItem(cofreOfrecido, item, cantidad);
+
+					System.out.print("\t\t\tAgarro los items que ofreció el cofre");
+					System.out.println("\t\t\t\tUbicacion actual: " + robot.getUbicacion() + ", Bateria actual: "
+							+ robot.getBateria());
+				} else {
+					robot.moverA(cofreSolicitado);
+					robot.descargarItem(cofreSolicitado, item, cantidad);
+
+					System.out.print("\t\t\tDejo los items que solicitó el cofre");
+					System.out.println("\t\t\t\tUbicacion actual: " + robot.getUbicacion() + ", Bateria actual: "
+							+ robot.getBateria());
+				}
+			}
+
+		}
+	}
+
 	public void atenderPedidos() {
 
 		if (robots.isEmpty()) {
@@ -222,13 +255,11 @@ public class Red {
 					while (true) {
 
 						Map<Robot, Set<Nodo>> ruta = planearRuta(cofreOfrecido, cofreSolicitado);
-						
-						if(ruta == null) 
+
+						if (ruta == null)
 							throw new IllegalArgumentException("NINGUN ROBOT LLEGA");
-						
-						
+
 						Map.Entry<Robot, Set<Nodo>> entrada = ruta.entrySet().iterator().next();
-						
 						Robot robot = entrada.getKey();
 						Set<Nodo> nodos = entrada.getValue();
 
@@ -241,38 +272,11 @@ public class Red {
 
 						System.out.print("LLevara " + cantidad + " unidades");
 
-						System.out.println("\t\t\t\tUbicacion actual: " + robot.getUbicacion() + ", Bateria actual: "
-								+ robot.getBateria());
-
-						for (Nodo nodo : nodos) {
-							if (nodo.esRobopuerto()) {
-								Robopuerto robopuertoIntermedio = ((NodoRobopuerto) nodo).getContenido();
-								System.out.print("\t\t\tVa a cargarse al robopuerto " + robopuertoIntermedio.getId()
-										+ " en " + robopuertoIntermedio.getUbicacion());
-								robot.moverA(robopuertoIntermedio);
-							} else {
-								Cofre cofre = ((NodoCofre) nodo).getContenido();
-								if (cofre.equals(cofreOfrecido)) {
-									robot.moverA(cofreOfrecido);
-									robot.cargarItem(cofreOfrecido, item, cantidad);
-
-									System.out.print("\t\t\tAgarro los items que ofreció el cofre");
-									System.out.println("\t\t\t\tUbicacion actual: " + robot.getUbicacion()
-											+ ", Bateria actual: " + robot.getBateria());
-								} else {
-									robot.moverA(cofreSolicitado);
-									robot.descargarItem(cofreSolicitado, item, cantidad);
-
-									System.out.print("\t\t\tDejo los items que solicitó el cofre");
-									System.out.println("\t\t\t\tUbicacion actual: " + robot.getUbicacion()
-											+ ", Bateria actual: " + robot.getBateria());
-								}
-							}
-
-						}
+						atenderPedido(robot, nodos, cofreOfrecido, cofreSolicitado, item, cantidad);
 
 						if (solicitado.getCantidad() != cantidad && ofrecido.getCantidad() != cantidad) {
-							System.out.println("\t\tFaltan ofrecidos y solicitados.");
+							System.out.println(
+									"\t\tFaltan ofrecidos y solicitados, porque el robot no tenia suficiente capacidad.");
 
 							ofrecido.setCantidad(ofrecido.getCantidad() - cantidad);
 							solicitado.setCantidad(solicitado.getCantidad() - cantidad);
@@ -317,14 +321,60 @@ public class Red {
 				System.out.print("\tNo se pudó completar todo el pedido del cofre " + ofrecido.getCofre().getId()
 						+ ", quedaron " + ofrecido.getCantidad() + " unidades de " + ofrecido.getItem()
 						+ " sin ofrecer por falta de solicitudes. ");
-				// hay que llevar lo que quedo a un cofre de inventario, solo si es un cofre
-				// activo
-				// hay que agregar una logica para saber a que cofre de inventario llevarlo
-				// si en esta situacion no hay cofre de inventario entonces el sistema no tiene
-				// solucion
 
-				// Robot robot = robots.iterator().next();
-				System.out.println("El robot X va a llevar el exceso al cofre de inventario X.");
+				if (cofreOfrecido.esActivo()) {
+					System.out.println("Se va a llevar a un cofre de almacenamiento. ");
+					
+					boolean llego = false;
+					boolean hayAlmacenamiento = false;
+					int cantidad = 0;
+
+					while (true) {
+
+						for (Cofre cofre : cofres) {
+							if (cofre.almacena()) {
+								hayAlmacenamiento = true;
+
+								Map<Robot, Set<Nodo>> ruta = planearRuta(cofreOfrecido, cofre);
+
+								if (ruta == null)
+									continue;
+
+								Map.Entry<Robot, Set<Nodo>> entrada = ruta.entrySet().iterator().next();
+								Robot robot = entrada.getKey();
+								Set<Nodo> nodos = entrada.getValue();
+
+								cantidad = Math.min(robot.getCapacidad(), ofrecido.getCantidad());
+
+								System.out.print("\t\tEl robot " + robot.getId()
+										+ " va a llevar el exceso al cofre de almacenamiento " + cofre.getId() + ". ");
+								System.out.print("LLevara " + cantidad + " unidades");
+
+								atenderPedido(robot, nodos, cofreOfrecido, cofre, item, cantidad);
+
+								llego = true;
+								break;
+							}
+						}
+
+						if (!hayAlmacenamiento)
+							throw new IllegalArgumentException("NO HAY COFRES DE ALMACENAMIENTO");
+
+						if (!llego)
+							throw new IllegalArgumentException("NINGUN ROBOT LLEGA");
+						else {
+							if (ofrecido.getCantidad() != cantidad) {
+								System.out.println(
+										"\t\tQuedan excesos por llevar, porque el robot no tenia suficiente capacidad.");
+
+								ofrecido.setCantidad(ofrecido.getCantidad() - cantidad);
+								llego = false;
+							} else
+								break;
+						}
+					}
+				}
+
 			}
 
 		}
