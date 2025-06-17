@@ -1,5 +1,6 @@
 package Cofres;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,7 +24,7 @@ public abstract class Cofre {
 
 	protected Map<String, Integer> ofrece = null;
 	protected Map<String, Integer> solicita = null;
-	protected Map<String, Integer> almacenamiento = null;
+	protected Map<String, Integer> almacenamiento = new HashMap<String, Integer>();
 
 	public Cofre() {
 		this.id = contador++;
@@ -54,11 +55,7 @@ public abstract class Cofre {
 	}
 
 	public void guardarItem(String item, int cantidad) {
-		if (almacenamiento.containsKey(item)) {
-			almacenamiento.replace(item, almacenamiento.get(item) + cantidad);
-		} else {
-			almacenamiento.put(item, cantidad);
-		}
+		almacenamiento.merge(item, cantidad, Integer::sum);
 	}
 
 	public Coordenada getUbicacion() {
@@ -80,6 +77,19 @@ public abstract class Cofre {
 	public boolean solicita() {
 		return !solicita.isEmpty();
 	}
+	
+	public void setAlmacenamiento(Map<String, Integer> almacenamiento) {
+		this.almacenamiento = almacenamiento;
+	}
+	
+	public void setOfrece(Map<String, Integer> ofrece) {
+		this.ofrece = ofrece;
+		this.almacenamiento.putAll(ofrece);
+	}
+	
+	public void setSolicita(Map<String, Integer> solicita) {
+		this.solicita = solicita;
+	}
 
 	public Map<String, Integer> getOfrece() {
 		return ofrece;
@@ -99,7 +109,8 @@ public abstract class Cofre {
 
 	@Override
 	public String toString() {
-		return ", ubicacion " + ubicacion;
+		return ", ubicacion " + ubicacion + ", almacenamiento: " + almacenamiento;
 	}
+
 
 }

@@ -134,25 +134,31 @@ public class Colonia {
 		}
 	}
 
-	public void cargarArchivo() {
+	public void cargarArchivo() throws Exception {
 		try {
+			boolean enRobopuerto = false;
 			ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
 			// Ya no es necesario registrar un deserializador para Item
-
 			// Leer el archivo YAML y reemplazar los campos de "this"
-			Colonia data = mapper.readValue(new File("C://Users//living//Desktop/colonia.yaml"), Colonia.class);
+			Colonia data = mapper.readValue(new File("C:\\Users\\Francisco\\Mi unidad\\Programación Avanzada\\Java\\TP2 codigo\\TP2---Progra-Avanzada\\colonia.yaml"), Colonia.class);
 			this.robopuertos = data.robopuertos;
 			this.cofres = data.cofres;
 			this.robots = data.robots;
 
 			for (Robot robot : robots) {
+				enRobopuerto = false;
 				for (Robopuerto robopuerto : robopuertos) {
 					if (robot.getUbicacion().equals(robopuerto.getUbicacion())) {
 						robot.setRobopuertoInicial(robopuerto);
+						enRobopuerto = true;
 						break;
 					}
 					// fallar si no esta en un robopuerto
+				}
+				if(!enRobopuerto)
+				{
+					throw new Exception("Error de configuración: el robot " + robot.getId() + " con ubicación " + robot.getUbicacion() + " no esta en ningún robopuerto");
 				}
 
 				robot.getBateria().recargar();
@@ -160,32 +166,44 @@ public class Colonia {
 
 			System.out.println("Archivo cargado correctamente.");
 		} catch (IOException e) {
-			e.printStackTrace();
 			System.err.println("Error al cargar el archivo YAML: " + e.getMessage());
-
+			throw new Exception();
 		}
-
-		// agregar validacion de que los cofres tengan ofrecidos solo si pueden ofrecer
-		// y tengan solicitados solo si pueden solicitar
+	}
+	
+	public void mostrarAtributos() {
+		 System.out.println("\nRobopuertos:"); for (Robopuerto robopuerto :
+		 this.robopuertos) { System.out.println("   " + robopuerto); }
+		 
+		 System.out.println("\nRobots:"); for (Robot robot : this.robots) {
+		 System.out.println("   " + robot); }
+		 
+		 System.out.println("\nCofres:"); for (Cofre cofre : this.cofres) {
+		 System.out.println("   " + cofre); }
 	}
 
 	public static void main(String[] args) {
 		Colonia colonia = new Colonia();
 
-		colonia.cargarArchivo();
+		try{	
+			
+			colonia.cargarArchivo();
+			
+		}catch(Exception e) {
+			
+	        System.exit(1);  // termina el programa con código 1 (error)
+		}
 
-		// mostrar entradas System.out.println("\n\nENTRADA");
+		System.out.println("\n\nENTRADA"); //mostrar entradas
+		
+		for(Cofre cofre: colonia.cofres) {
+			if(cofre.getTipo() == "Cofre Activo")
+				cofre.guardarItem("itemA", 5);
+		}
+		
+		colonia.mostrarAtributos(); //mostrar entradas
 
-//		 System.out.println("\nRobopuertos:"); for (Robopuerto robopuerto :
-//		 colonia.robopuertos) { System.out.println("   " + robopuerto); }
-//		 
-//		 System.out.println("\nRobots:"); for (Robot robot : colonia.robots) {
-//		 System.out.println("   " + robot); }
-//		 
-//		 System.out.println("\nCofres:"); for (Cofre cofre : colonia.cofres) {
-//		 System.out.println("   " + cofre); }
-
-		colonia.crearRedes();
+		//colonia.crearRedes();
 		/*
 		 * // mostarr redes System.out.println("\n\nARMAR REDES");
 		 * 
@@ -198,7 +216,7 @@ public class Colonia {
 		 * // Iniciar simulacion System.out.println("\n\nINICIAR SIMULACION");
 		 */
 
-		colonia.iniciarSimulacion();
+		//colonia.iniciarSimulacion();
 
 	}
 
