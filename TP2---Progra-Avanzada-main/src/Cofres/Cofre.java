@@ -39,6 +39,10 @@ public abstract class Cofre {
 		this.solicita = solicita;
 		this.almacenamiento = almacenamiento;
 		
+		if(ofrece!=null) {
+			almacenamiento.putAll(ofrece);
+		}
+		
 		validar();
 	}
 	
@@ -48,18 +52,29 @@ public abstract class Cofre {
 		if (ofrece.containsKey(item)) {
 			if (ofrece.get(item) > cantidad) {
 				ofrece.put(item, ofrece.get(item) - cantidad);
+				almacenamiento.put(item, almacenamiento.get(item) - cantidad);
 			} else if (ofrece.get(item) == cantidad) {
 				ofrece.remove(item);
-			}
-		}
+				almacenamiento.remove(item);
+			} else
+				throw new UnsupportedOperationException("No hay esa cantidad para quitar");
+		} else 
+			throw new UnsupportedOperationException("No tiene ese item");
+		
 	}
 
 	public void guardarItem(String item, int cantidad) {
-		if (almacenamiento.containsKey(item)) {
-			almacenamiento.put(item, almacenamiento.get(item) + cantidad);
-		} else {
-			almacenamiento.put(item, cantidad);
-		}
+		if(solicita.containsKey(item)) {
+			if(solicita.get(item) > cantidad) {
+				solicita.put(item, solicita.get(item) - cantidad);
+			} else if (solicita.get(item) == cantidad) {
+				solicita.remove(item);
+			} else
+				throw new UnsupportedOperationException("No solicita tanta cantidad");
+		} else 
+			throw new UnsupportedOperationException("No solicita ese item");
+		
+		almacenamiento.merge(item, cantidad, Integer::sum);
 	}
 
 	public Coordenada getUbicacion() {
@@ -89,8 +104,22 @@ public abstract class Cofre {
 	public boolean esActivo() {
 		return false;
 	}
+	
+	public void setAlmacenamiento(Map<String, Integer> almacenamiento) {
+		this.almacenamiento = almacenamiento;
+	}
+	
+	public void setOfrece(Map<String, Integer> ofrece) {
+		this.ofrece = ofrece;
+		this.almacenamiento.putAll(ofrece);
+	}
+	
+	public void setSolicita(Map<String, Integer> solicita) {
+		this.solicita = solicita;
+	}
+	
 
-	public Map<String, Integer> getOfrece() {
+	public Map<String, Integer> getOfrece() { 
 		return ofrece;
 	}
 
@@ -105,10 +134,16 @@ public abstract class Cofre {
 	public int getId() {
 		return id;
 	}
+	
+	public void desofrecer(String item) {
+		if(ofrece.containsKey(item)) {
+			ofrece.remove(item);
+		}
+	}
 
 	@Override
 	public String toString() {
-		return ", ubicacion " + ubicacion;
+		return ", ubicacion " + ubicacion + ", almacenamiento: " + almacenamiento;
 	}
 
 }

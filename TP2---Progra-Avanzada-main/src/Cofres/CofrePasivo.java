@@ -1,5 +1,9 @@
 package Cofres;
 
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class CofrePasivo extends Cofre {
 	protected void validar() {
         if (solicita != null && !solicita.isEmpty())
@@ -8,6 +12,17 @@ public class CofrePasivo extends Cofre {
         if (almacenamiento != null && !almacenamiento.isEmpty())
             throw new IllegalArgumentException("Un cofre pasivo no puede almacenar");
     }
+	
+	@Override
+	@JsonProperty("solicita")
+	public void setSolicita(Map<String, Integer> solicita) {
+		throw new UnsupportedOperationException("Un cofre de ofrecimiento pasivo no puede solicitar.");
+	}
+	
+	@Override
+	public int getPrioridad() {
+		return 1;
+	}
 	
 	@Override
     public String toString() {
