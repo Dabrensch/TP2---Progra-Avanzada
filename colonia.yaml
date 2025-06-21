@@ -14,103 +14,82 @@ robopuertos:
       y: 5
     alcance: 20
 
-  - ubicacion:
-      x: -30
-      y: 40
-    alcance: 10
-
-  - ubicacion:
-      x: -10
-      y: 60
-    alcance: 20
-
-  - ubicacion:
-      x: 30
-      y: 50
-    alcance: 10
-
 
 robots:
   - ubicacion:
-      x: 0
-      y: 0
-    capacidad: 100
+      x: -25
+      y: 5
+    capacidad: 10
     bateria:
-      celulasMaximas: 100
-      celulas: 100
+      celulasMaximas: 80
 
   - ubicacion:
       x: 20
       y: 20
-    capacidad: 100
+    capacidad: 5
     bateria:
-      celulasMaximas: 100
-      celulas: 100
+      celulasMaximas: 60
 
 
 cofres:
-  - tipo: activo
-    ubicacion:
-      x: -20
-      y: 70
-    ofrece:
-      itemA: 10
-      itemB: 20
-
   - tipo: almacenamiento
+    ubicacion:
+      x: 10
+      y: 10
+
+  - tipo: activo
     ubicacion:
       x: -40
       y: 10
-    almacenamiento:
-      itemC: 50
+    ofrece:
+      itemA: 10
+      itemB: 5
+      itemC: 15
 
-  - tipo: buffer
+  - tipo: activo
     ubicacion:
       x: 30
       y: 20
     ofrece:
-      itemD: 5
-    solicita:
-      itemA: 2
+      itemA: 10
 
-  - tipo: pasivo
+  - tipo: buffer
     ubicacion:
       x: 25
       y: 25
     ofrece:
-      itemE: 8
+      itemD: 8
+    solicita:
+      itemC: 2
 
   - tipo: solicitud
     ubicacion:
       x: 5
       y: 5
     solicita:
-      itemF: 15
+      itemA: 15
 
   - tipo: solicitud
     ubicacion:
       x: 5
       y: -15
     solicita:
-      itemF: 2
+      itemA: 2
 
-  - tipo: activo
+  - tipo: solicitud
     ubicacion:
       x: -10
       y: 5
-    ofrece:
-      itemF: 10
+    solicita:
+      itemD: 8
 
-  - tipo: activo
+  - tipo: pasivo
     ubicacion:
       x: -20
       y: 20
     ofrece:
-      itemF: 10
+      itemB: 4
+      itemA: 1
 
-  - tipo: activo
-    ubicacion:
-      x: 0
-      y: 30
-    ofrece:
-      itemF: 10
+
+
