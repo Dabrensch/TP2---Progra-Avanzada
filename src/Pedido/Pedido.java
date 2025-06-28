@@ -41,8 +41,10 @@ public abstract class Pedido {
 	}
 
 	public void setCantidad(int cantidad) {
-		if (cantidad <= 0)
-			throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
+		//if (cantidad <= 0)
+			//throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
+		// Lo comento porque cuando se entregan todos ofrecidos tira illegal
+		//Habria que ver si queremos que lo tire cuando la cantidad sea < 0, o mismo hacer override del metodo en PedidoOfrecido
 		
 		this.cantidad = cantidad;
 	}

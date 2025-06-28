@@ -156,11 +156,10 @@ public class Red {
 
 	private Ruta planearRuta(Cofre origen, Cofre destino) {
 		Set<Robot> robots = new HashSet<>(this.robots);
-		int n = robots.size();
 
 		Robot elegido;
 
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < robots.size(); i++) {
 			elegido = elegirRobotMasCercano(origen, robots);
 
 			Ruta ruta = rutaRobot(origen, destino, elegido);
@@ -210,7 +209,7 @@ public class Red {
 
 	private void atenderPedido(Robot robot, List<Nodo> ruta, Cofre cofreOfrecido, Cofre cofreSolicitado, String item,
 			int cantidad) {
-		System.out.println("\t\t\t\tUbicacion actual: " + robot.getUbicacion() + ", Bateria actual: "
+		System.out.println("\t\t\tUbicacion actual: " + robot.getUbicacion() + ", Bateria actual: "
 				+ robot.getBateria() + ", Capacidad: " + robot.getCapacidad());
 
 		for (Nodo nodo : ruta) {
@@ -261,12 +260,14 @@ public class Red {
 
 			solicitados.sort(Comparator
 					.comparing(pedido -> pedido.getCofre().getUbicacion().distanciaA(cofreOfrecido.getUbicacion())));
+			
+			// Esta linea busca el cofre solicitud mas cercano para atender la oferta de items del cofreOfrecido.
 
 			for (Pedido solicitado : solicitados) {
 				// recorrer las solicitudes en busca de un cofre que solicite el item del pedido
 				if (solicitado.getItem().equals(item) == true && solicitado.getCantidad() != 0) {
 
-					System.out.println("\n\tEl " + solicitado.getCofre().getTipo() + " " + solicitado.getCofre().getId()
+					System.out.println("\nEl " + solicitado.getCofre().getTipo() + " " + solicitado.getCofre().getId()
 							+ " solicitó " + solicitado.getCantidad() + " unidades de " + solicitado.getItem() + ".");
 
 					Cofre cofreSolicitado = solicitado.getCofre();
@@ -292,14 +293,12 @@ public class Red {
 						List<Nodo> nodos = ruta.getRuta();
 						costo += ruta.getCosto();
 
-						System.out.print("\t\tEl robot " + robot.getId() + " va a realizar el pedido. ");
-
 						cantidad = Math.min(robot.getCapacidad(),
 								(Math.min(ofrecido.getCantidad(), solicitado.getCantidad()))); // logica para saber que
 																								// cantidad retirar y
 																								// entregar
-
-						System.out.print("LLevara " + cantidad + " unidades");
+						
+						System.out.print("\t\tEl robot " + robot.getId() + " va a realizar el pedido. Llevará  " + cantidad + " unidades");
 
 						atenderPedido(robot, nodos, cofreOfrecido, cofreSolicitado, item, cantidad);
 

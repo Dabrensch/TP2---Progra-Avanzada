@@ -14,7 +14,7 @@ public class Robot {
 	private int capacidad;
 	private Bateria bateria;
 
-	private Robopuerto robopuerto;
+	private Robopuerto robopuerto; //Este atributo estaria duplicado? 
 
 	private Map<String, Integer> inventario = new HashMap<>();
 
@@ -48,7 +48,6 @@ public class Robot {
 		ubicacion = cofre.getUbicacion();
 		bateria.descargar(celulas);
 	}
-
 	public void moverA(Robopuerto robopuerto) {
 		if (robopuerto == null)
 			throw new IllegalArgumentException("Robopuerto destino nulo");
@@ -60,9 +59,9 @@ public class Robot {
 		bateria.descargar(celulas);
 		ubicacion = robopuerto.getUbicacion();
 
-		System.out.print("Cargando... " + bateria.getCelulas() + "celulas -> ");
+		System.out.print("\nCargando... " + bateria.getCelulas() + " celulas --> ");
 		this.recargar();
-		System.out.println(bateria.getCelulas() + "celulas.");
+		System.out.println(bateria.getCelulas() + " celulas --> Bateria completa.");
 	}
 
 	public void recargar() {

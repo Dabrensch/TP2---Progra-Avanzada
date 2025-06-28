@@ -172,7 +172,7 @@ public class Colonia {
 			ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
 			Colonia data = mapper.readValue(
-					new File("C://Users//Brenda//eclipse-workspace//TP2---Progra-Avanzada-main//colonia.yaml"),
+					new File("C://Users//Fran_//Desktop//colonia.yaml"),
 					Colonia.class);
 			this.robopuertos = data.robopuertos;
 			this.cofres = data.cofres;

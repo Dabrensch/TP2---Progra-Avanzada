@@ -41,6 +41,7 @@ public class Bateria {
 			throw new IllegalArgumentException("La distancia no puede ser negativa");
 		
 		return (int) (Math.ceil(distancia) * factorConsumo);
+		//Math.ceil redondea el valor del double al siguiente entero
 	}
 
 	// SETTERS
