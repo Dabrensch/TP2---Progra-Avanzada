@@ -2,7 +2,10 @@ package general;
 
 import cofres.Cofre;
 import pedido.Pedido;
+import robopuerto.Robopuerto;
 import robot.Robot;
+import sistema.Colonia;
+import sistema.Red;
 
 public class Printer {
     private static final int COL_1 = 10;   // ancho para la 1º columna
@@ -36,16 +39,15 @@ public class Printer {
 
     	int energiaActual = r.getBateria().getCelulas();
 		int energiaMaxima = r.getBateria().getCelulasMaximas();
-		int capacidad = r.getCapacidad();
 
-		System.out.printf("\t%s %s | Batería: %3d/%-3d | Capacidad: %2d%n",
-				ctx, ubicacion, energiaActual, energiaMaxima, capacidad);
+		System.out.printf("\t%s %s | Batería: %3d/%-3d\n ",
+				ctx, ubicacion, energiaActual, energiaMaxima);
     }
 
     public static void excesoSinDemandaTrasEntregasActivo(Pedido pedido) {
         Cofre cofre = pedido.getCofre();
         System.out.printf(""
-        		+ "\t⚠️ El %s %d no pudo completar la entrega de %d unidades de %s."
+        		+ "\n\t⚠️ El %s %d no pudo completar la entrega de %d unidades de %s."
         		+ "\n\t➤ Ya se hicieron entregas, pero no hay más cofres que lo soliciten."
         		+ "\n\t➤ Se intentará llevar el exceso a un cofre de almacenamiento.\n",
             cofre.getTipo(), cofre.getId(),
@@ -54,32 +56,31 @@ public class Printer {
 
     public static void excesoSinDemandaInicialActivo(Pedido pedido) {
         Cofre cofre = pedido.getCofre();
-        System.out.printf("""
-            ⚠️  El %s %d no pudo entregar %d unidades de %s.
-                ➤ No hay cofres que soliciten este ítem.
-                ➤ Se intentará llevar el ofrecimiento completo a un cofre de almacenamiento.
-            """,
+        System.out.printf(""
+        	   + "\n\t⚠️ El %s %d no pudo entregar %d unidades de %s."
+               + "\n\t➤ No hay cofres que soliciten este ítem."
+               + "\n\t➤ Se intentará llevar el ofrecimiento completo a un cofre de almacenamiento.\n",
             cofre.getTipo(), cofre.getId(),
             pedido.getCantidad(), pedido.getItem());
     }
     public static void excesoSinDemandaTrasEntregasPasivo(Pedido pedido) {
         Cofre cofre = pedido.getCofre();
-        System.out.printf("""
-            ⚠️  El %s %d no pudo completar la entrega de %d unidades de %s.
-                ➤ Ya se entregó parcialmente, pero no hay más solicitantes.
-                ➤ Como es un cofre pasivo, dejará de ofrecer el ítem.
-            """,
+        System.out.printf(""
+               + "\n\t⚠️ El %s %d no pudo completar la entrega de %d unidades de %s."
+               + "\n\t➤ Ya se entregó parcialmente, pero no hay más solicitantes."
+               + "\n\t➤ Como el cofre ofrece de forma pasiva, no se llevará al almacenamiento."
+               + "\n\t➤ Dejará de ofrecer el ítem.",
             cofre.getTipo(), cofre.getId(),
             pedido.getCantidad(), pedido.getItem());
     }
 
     public static void excesoSinDemandaInicialPasivo(Pedido pedido) {
         Cofre cofre = pedido.getCofre();
-        System.out.printf("""
-            ⚠️  El %s %d no pudo entregar %d unidades de %s.
-                ➤ No hay cofres que soliciten este ítem.
-                ➤ Como es un cofre pasivo, dejará de ofrecer el ítem.
-            """,
+        System.out.printf(""
+               + "\n\t⚠️ El %s %d no pudo entregar %d unidades de %s."
+               + "\n\t➤ No hay cofres que soliciten este ítem."
+               + "\n\t➤ Como el cofre ofrece de forma pasiva, no se llevará al almacenamiento."
+               + "\n\t➤ Dejará de ofrecer el ítem.",
             cofre.getTipo(), cofre.getId(),
             pedido.getCantidad(), pedido.getItem());
     }
@@ -104,7 +105,7 @@ public class Printer {
 
     public static void trasladoExcedente(Robot r, Cofre destino,
                                          int cant, String item) {
-        System.out.printf("\n\t🤖%s llevará %d %s al %s %d (excedente)%n",
+        System.out.printf("\n\t🤖%s llevará %d %s (excedente) al %s %d %n",
                           txtRobot(r), cant, item,
                           destino.getTipo(), destino.getId());
     }
@@ -148,7 +149,46 @@ public class Printer {
     private static String txtRobot(Robot r) {
         return "Robot " + r.getId();
     }
-    /* ========== helpers privados ========== */
+    public static void mostrarColonia(Colonia colonia) {
+        System.out.println("\n🏙️  Colonia cargada:");
+
+        for (Red red : colonia.getRedes()) {
+            System.out.println("\n🔸 Red " + red.getId() + ":");
+
+            // Robopuertos
+            System.out.println("  🛰️  Robopuertos:");
+            int count = 0;
+            for (Robopuerto rp : red.getRobopuertos()) {
+                System.out.printf("    Robopuerto %d (X:%d; Y:%d)  ", rp.getId(), 
+                    rp.getUbicacion().getX(), rp.getUbicacion().getY());
+                count++;
+                if (count % 3 == 0) System.out.println();
+            }
+            if (count % 3 != 0) System.out.println(); // salto si no cerró justo
+
+            // Robots
+            System.out.println("  🤖 Robots:");
+            count = 0;
+            for (Robot robot : red.getRobots()) {
+                System.out.printf("    Robot %d (Robopuerto %d)  ", robot.getId(), 
+                    robot.getRobopuerto().getId());
+                count++;
+                if (count % 3 == 0) System.out.println();
+            }
+            if (count % 3 != 0) System.out.println();
+
+            // Cofres
+            System.out.println("  📦 Cofres:");
+            count = 0;
+            for (Cofre cofre : red.getCofres()) {
+                System.out.printf("    %s %d (X:%d; Y:%d)  ", cofre.getTipo(), cofre.getId(), 
+                    cofre.getUbicacion().getX(), cofre.getUbicacion().getY());
+                count++;
+                if (count % 3 == 0) System.out.println();
+            }
+            if (count % 3 != 0) System.out.println();
+        }
+    }
 
     private static String txtCofre(Cofre c, String verbo) {
         return String.format("El %s %d %s", c.getTipo(), c.getId(), verbo);

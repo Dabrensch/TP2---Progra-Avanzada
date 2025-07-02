@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import cofres.*;
+import general.Printer;
 import pedido.*;
 import robopuerto.Robopuerto;
 import robot.*;
@@ -20,6 +21,8 @@ public class Colonia {
 	Set<Red> redes = new HashSet<>();
 
 	Set<Cofre> cofresNoAsignados = new HashSet<>();
+	List<Cofre> cofresCriticos = new ArrayList<>();
+	List<Cofre> cofresNoCriticos = new ArrayList<>();
 	Set<Red> redesSinSolucion = new HashSet<>();
 
 	public void crearRedes() {
@@ -121,44 +124,66 @@ public class Colonia {
 		for (Red red : redes) {
 			cofresNoAsignados.removeAll(red.getCofres());
 		}
+		for (Cofre cofre : cofresNoAsignados) {
+		    boolean esCritico = false;
+
+		    String tipo = cofre.getTipo();
+
+		    if (tipo.equals("CofreActivo") || tipo.equals("CofreSolicitud") || tipo.equals("CofreBuffer") && cofre.solicita())
+		        esCritico = true;
+
+		    if (esCritico) {
+		        cofresCriticos.add(cofre);
+		    } else {
+		        cofresNoCriticos.add(cofre);
+		    }
+		}
 	}
 
 	public void iniciarSimulacion() {
 		System.out.println("************************ EMPIEZA LA SIMULACION! ************************\n");
-		
+		Printer.mostrarColonia(this);
 		for (Red red : redes) {
 			System.out.print("\n------------ La red " + red.getId() + " va a atender los pedidos ------------");
 			int costo = red.atenderPedidos();
 			System.out.println("\n------------ La red " + red.getId() + " termino de atender los pedidos ------------");
 			if (costo == -1) {
-				System.out.println("\nLa red " + red.getId() + " no tiene solucion. ");
+				Printer.advertencia("La red " + red.getId() + " no tiene solucion. ");
 				redesSinSolucion.add(red);
 			}
 
 			else
-				System.out.println("\nLa red " + red.getId() + " tiene solucion, tuvo un costo de: " + costo);
+				Printer.info("La red " + red.getId() + " tiene solucion, tuvo un costo de: " + costo);
 			// costo = distancia recorrida + 1 por cada carga + 1 por sacar algo de un cofre
 			// + 1 por dejar algo en un cofre
 		}
 		
 		System.out.println("\n\n************************ TERMINO LA SIMULACION! ************************");
 
-		// Chequear si el sistema tiene solucion
-		if (!cofresNoAsignados.isEmpty() || !redesSinSolucion.isEmpty())
+		boolean hayCofresNoAsignadosCriticos = !cofresCriticos.isEmpty();
+		
+		if (hayCofresNoAsignadosCriticos || !redesSinSolucion.isEmpty())
 			System.out.println("\nEl sistema no tiene solución: ");
 		else
 			System.out.println("\nEl sistema tiene solución! Todas las redes completaron los pedidos y no hay cofres fuera de cobertura.");
 
 
-		if (!cofresNoAsignados.isEmpty()) {
-			System.out.println("\tHay cofres fuera de cobertura: ");
-			for (Cofre cofre : cofresNoAsignados) {
+		if (hayCofresNoAsignadosCriticos) {
+			Printer.advertencia("Hay cofres criticos fuera de cobertura: ");
+			for (Cofre cofre : cofresCriticos) {
 				System.out.println("\t\t"+ cofre.getTipo() + " "+ cofre.getId());
 			}
 		}
-
+		if(!cofresNoCriticos.isEmpty()) {
+			Printer.info("Hay otros cofres fuera de cobertura: ");
+			for(Cofre cofre : cofresNoCriticos) {
+				System.out.println("\t\t"+ cofre.getTipo() + " "+ cofre.getId());
+			}
+		}
+		
+		
 		if (!redesSinSolucion.isEmpty()) {
-			System.out.println("\tHay redes que no completaron todos los pedidos: ");
+			Printer.advertencia("Hay redes que no completaron todos los pedidos: ");
 			for (Red red : redesSinSolucion) {
 				System.out.println("\t\tRed: " + red.getId());
 			}
@@ -221,30 +246,8 @@ public class Colonia {
 			System.out.println("   " + cofre);
 		}
 	}
-
-	public static void main(String[] args) {
-		Colonia colonia = new Colonia();
-
-		try {
-			colonia.cargarArchivo();
-		} catch (Exception e) {
-			System.exit(1);
-		}
-
-		// Mostrar entradas
-//		System.out.println("\n\nENTRADA");
-//		colonia.mostrarAtributos();
-//		System.out.println("\n\n");
-
-		// Crear redes
-		colonia.crearRedes();
-
-		// Iniciar simulacion
-		colonia.iniciarSimulacion();
-
-		// Mostrar entradas al final
-//		colonia.mostrarAtributos();
-
+	public Set<Red> getRedes() {
+	    return this.redes;
 	}
 
 }

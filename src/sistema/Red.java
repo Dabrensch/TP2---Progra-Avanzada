@@ -247,13 +247,14 @@ public class Red {
 			boolean entregoAlgo = false;
 			
 			Printer.oferta(ofrecido);
-
+			Printer.info("Se buscará un cofre cercano que solicite " + ofrecido.getItem());
 			solicitados.sort(Comparator
 					.comparing(pedido -> pedido.getCofre().getUbicacion().distanciaA(cofreOfrecido.getUbicacion())));
 			
 			// Esta linea busca el cofre solicitud mas cercano para atender la oferta de items del cofreOfrecido.
 
 			for (Pedido solicitado : solicitados) {
+				
 				// recorrer las solicitudes en busca de un cofre que solicite el item del pedido
 				if (solicitado.getItem().equals(item) == true && solicitado.getCantidad() != 0) {
 					Printer.solicitud(solicitado);
@@ -266,7 +267,7 @@ public class Red {
 					}
 
 					while (true) {
-
+						
 						Ruta ruta = planearRuta(cofreOfrecido, cofreSolicitado);
 
 						if (ruta == null) {
@@ -287,10 +288,9 @@ public class Red {
 						atenderPedido(robot, nodos, cofreOfrecido, cofreSolicitado, item, cantidad);
 						entregoAlgo = true;
 						if (solicitado.getCantidad() != cantidad && ofrecido.getCantidad() != cantidad) {
-							Printer.info("Quedan ítems porque la capacidad del robot fue insuficiente.");
-
 							ofrecido.setCantidad(ofrecido.getCantidad() - cantidad);
 							solicitado.setCantidad(solicitado.getCantidad() - cantidad);
+							Printer.info("Quedan "+ ofrecido.getCantidad() + " de " + ofrecido.getItem() +" porque la capacidad del robot fue insuficiente.");
 						} else
 							break;
 					}
@@ -308,13 +308,14 @@ public class Red {
 							ofrecido.setCantidad(0);
 							break; // no hay solicitados ni ofrecidos, se cumplieron ambos pedidos
 						} else {
-							Printer.info("Se completó toda la solicitud, pero quedan " + (ofrecido.getCantidad() - cantidad) + " por ofrecer.");
-
+							Printer.info("Se completó toda la solicitud del "+ solicitado.getCofre().getTipo() + ": "+ solicitado.getCofre().getId() +
+									", pero quedan " + (ofrecido.getCantidad() - cantidad) + " de " + ofrecido.getItem() + " por ofrecer.");
+							Printer.info("Se buscará otro cofre cercano que solicite " + ofrecido.getItem());
 							ofrecido.setCantidad(ofrecido.getCantidad() - cantidad); // faltan ofrecidos, se sigue
 																						// iterando
 						}
 					} else if (ofrecido.getCantidad() - cantidad == 0) {
-						Printer.info("No queda más para ofrecer, pero hay cofres que siguen esperando ese ítem.");
+						Printer.info("El cofre no tiene mas "+ ofrecido.getItem() +" para ofrecer, pero hay otros cofres que siguen esperando "+ ofrecido.getItem()  +".");
 						ofrecido.setCantidad(0);
 						solicitado.setCantidad(solicitado.getCantidad() - cantidad); // se ofrecieron todos los
 																						// items
@@ -332,7 +333,7 @@ public class Red {
 					else
 			            Printer.excesoSinDemandaInicialActivo(ofrecido);
 					if (robots.isEmpty()) {
-						System.out.println("No hay robots para llevar a un cofre de almacenamiento. ");
+						Printer.advertencia("No hay robots para llevar a un cofre de almacenamiento.");
 						break;
 					}
 
@@ -384,9 +385,10 @@ public class Red {
 
 								ofrecido.setCantidad(ofrecido.getCantidad() - cantidad);
 								llego = false;
-							} else
+							} else {
 								Printer.info("Se trasladó todo el excedente.");
-							break;
+								break;								
+							}
 						}
 					}
 				} else {

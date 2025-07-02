@@ -149,7 +149,7 @@ public abstract class Cofre {
 	}
 
 	// OTRAS
-
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
