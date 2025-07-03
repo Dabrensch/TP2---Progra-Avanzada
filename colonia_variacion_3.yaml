@@ -1,0 +1,85 @@
+robopuertos:
+- ubicacion:
+    x: -20
+    y: 20
+  alcance: 15 
+
+- ubicacion:
+    x: 0
+    y: 20
+  alcance: 15 
+
+- ubicacion:
+    x: -35
+    y: 0
+  alcance: 20 
+
+- ubicacion:
+    x: 0
+    y: -10
+  alcance: 20 
+
+robots:
+- ubicacion:
+    x: -20
+    y: 20
+  capacidad: 10
+  bateria:
+    celulasMaximas: 73
+
+- ubicacion:
+    x: 0
+    y: -10
+  capacidad: 15
+  bateria:
+    celulasMaximas: 89
+
+cofres:
+- tipo: activo
+  ubicacion:
+    x: -40
+    y: 10
+  ofrece:
+    Hierro: 28
+    Plata: 3
+
+- tipo: solicitud
+  ubicacion:
+    x: -40
+    y: -15
+  solicita:
+    Hierro: 12
+    Cobre: 14
+
+- tipo: almacenamiento
+  ubicacion:
+    x: 10
+    y: -20
+
+- tipo: buffer
+  ubicacion:
+    x: 0
+    y: 30
+  ofrece:
+    Cobre: 7
+    Oro: 5
+  solicita:
+    Plata: 3
+
+- tipo: pasivo
+  ubicacion:
+    x: -10
+    y: -10
+  ofrece:
+    Cobre: 10
+    Plata: 25
+
+- tipo: solicitud
+  ubicacion:
+    x: -20
+    y: 30
+  solicita:
+    Plata: 15
+    Oro: 5
+    Hierro: 16
+
