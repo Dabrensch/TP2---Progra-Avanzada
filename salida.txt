@@ -1,0 +1,127 @@
+Se va a cargar el archivo de entrada para realizar la simulacion...
+Archivo cargado correctamente.
+
+
+************************ EMPIEZA LA SIMULACIÓN! ************************
+
+
+🏙️  Colonia cargada:
+
+🔸 Red 1:
+  🛰️  Robopuertos:
+    Robopuerto 2 (X:30; Y:50)      Robopuerto 3 (X:-20; Y:20)      Robopuerto 1 (X:20; Y:20)  
+    Robopuerto 4 (X:-50; Y:30)  
+  🤖 Robots:
+    Robot 1 (Robopuerto 3)      Robot 2 (Robopuerto 2)  
+  📦 Cofres:
+    CofrePasivo 2 (X:-60; Y:36)      CofreBuffer 3 (X:35; Y:20)      CofreActivo 4 (X:-20; Y:40)  
+    CofreSolicitud 1 (X:-20; Y:7)      CofreAlmacenamiento 5 (X:28; Y:60)  
+
+🔸 Red 2:
+  🛰️  Robopuertos:
+    Robopuerto 5 (X:80; Y:-20)      Robopuerto 6 (X:50; Y:-65)  
+  🤖 Robots:
+  📦 Cofres:
+    CofreActivo 8 (X:73; Y:-30)      CofreSolicitud 6 (X:40; Y:-60)      CofreBuffer 7 (X:100; Y:-40)  
+
+------------ La red 1 va a atender los pedidos ------------
+
+🟢 El CofreActivo 4 ofreció 20 unidades de Hierro
+   ℹ️  Se buscará un cofre cercano que solicite Hierro
+
+🔵 El CofreSolicitud 1 solicitó 12 unidades de Hierro
+
+	🤖Robot 1 llevará 10 Hierro
+	👉Ubicación actual: (X:-20;Y:20) | Batería:  80/80 
+ 
+	📦Robot 1 tomó 10 Hierro del CofreActivo 4
+	🚚Ubicacion actual: (X:-20;Y:40) | Batería:  60/80 
+ 
+	📤Robot 1 dejó 10 Hierro en CofreSolicitud 1
+	🚚Ubicacion actual: (X:-20;Y:7) | Batería:  27/80 
+ 
+	🔋Va a recargarse al Robopuerto 3 en (-20, 20)
+	⚡Cargando... [█░░░░░░░░░]  14/80  --> [██████████]  80/80  - Carga completa
+
+   ℹ️  Quedan 10 de Hierro porque la capacidad del robot fue insuficiente.
+
+	🤖Robot 1 llevará 2 Hierro
+	👉Ubicación actual: (X:-20;Y:20) | Batería:  80/80 
+ 
+	📦Robot 1 tomó 2 Hierro del CofreActivo 4
+	🚚Ubicacion actual: (X:-20;Y:40) | Batería:  60/80 
+ 
+	📤Robot 1 dejó 2 Hierro en CofreSolicitud 1
+	🚚Ubicacion actual: (X:-20;Y:7) | Batería:  27/80 
+ 
+	🔋Va a recargarse al Robopuerto 3 en (-20, 20)
+	⚡Cargando... [█░░░░░░░░░]  14/80  --> [██████████]  80/80  - Carga completa
+
+   ℹ️  Se completó toda la solicitud del CofreSolicitud: 1, pero quedan 8 de Hierro por ofrecer.
+   ℹ️  Se buscará otro cofre cercano que solicite Hierro
+
+🔵 El CofreBuffer 3 solicitó 8 unidades de Hierro
+
+	🤖Robot 1 llevará 8 Hierro
+	👉Ubicación actual: (X:-20;Y:20) | Batería:  80/80 
+ 
+	📦Robot 1 tomó 8 Hierro del CofreActivo 4
+	🚚Ubicacion actual: (X:-20;Y:40) | Batería:  60/80 
+ 
+	🔋Va a recargarse al Robopuerto 1 en (20, 20)
+	⚡Cargando... [█░░░░░░░░░]  15/80  --> [██████████]  80/80  - Carga completa
+
+
+	📤Robot 1 dejó 8 Hierro en CofreBuffer 3
+	🚚Ubicacion actual: (X:35;Y:20) | Batería:  65/80 
+ 
+	🔋Va a recargarse al Robopuerto 1 en (20, 20)
+	⚡Cargando... [██████░░░░]  50/80  --> [██████████]  80/80  - Carga completa
+
+   ℹ️  Se completó el pedido.
+
+
+🟢 El CofreBuffer 3 ofreció 7 unidades de Esmeralda
+   ℹ️  Se buscará un cofre cercano que solicite Esmeralda
+
+	⚠️ El CofreBuffer 3 no pudo entregar 7 unidades de Esmeralda.
+	➤ No hay cofres que soliciten este ítem.
+	➤ Como el cofre ofrece de forma pasiva, no se llevará al almacenamiento.
+	➤ Dejará de ofrecer el ítem.
+
+🟢 El CofrePasivo 2 ofreció 8 unidades de Diamante
+   ℹ️  Se buscará un cofre cercano que solicite Diamante
+
+	⚠️ El CofrePasivo 2 no pudo entregar 8 unidades de Diamante.
+	➤ No hay cofres que soliciten este ítem.
+	➤ Como el cofre ofrece de forma pasiva, no se llevará al almacenamiento.
+	➤ Dejará de ofrecer el ítem.
+
+------------ La red 1 terminó de atender los pedidos ------------
+
+
+   ℹ️  La red 1 tiene solucion, tuvo un costo de: 231
+
+------------ La red 2 va a atender los pedidos ------------
+
+🟢 El CofreActivo 8 ofreció 7 unidades de Esmeralda
+   ℹ️  Se buscará un cofre cercano que solicite Esmeralda
+
+🔵 El CofreBuffer 7 solicitó 2 unidades de Esmeralda
+   ⚠️  No hay robots disponibles para atender los pedidos.
+
+===== Solicitudes incompletas =====
+  •Cofre: CofreBuffer 7, Item: Esmeralda, Cantidad: 2
+  •Cofre: CofreSolicitud 6, Item: Hierro, Cantidad: 12
+
+
+------------ La red 2 terminó de atender los pedidos ------------
+
+
+   ⚠️  La red 2 no tiene solucion. 
+
+
+************************ TERMINO LA SIMULACIÓN! ************************
+   ⚠️  El sistema no tiene solución
+   ⚠️  Hay redes que no completaron todos los pedidos: 
+		Red: 2
