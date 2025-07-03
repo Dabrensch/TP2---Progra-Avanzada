@@ -31,32 +31,18 @@ robopuertos:
 
 robots:
 - ubicacion:
-    x: 80
-    y: -20
-  capacidad: 5
-  bateria:
-    celulasMaximas: 80
-
-- ubicacion:
     x: -20
     y: 20
   capacidad: 10
   bateria:
-    celulasMaximas: 60
+    celulasMaximas: 80
 
 - ubicacion:
     x: 30
     y: 50 
   capacidad: 8
   bateria:
-    celulasMaximas: 30
-
-- ubicacion:
-    x: 50
-    y: -65
-  capacidad: 20
-  bateria:
-    celulasMaximas: 45
+    celulasMaximas: 50
 
 cofres:
 - tipo: solicitud
@@ -64,30 +50,30 @@ cofres:
     x: -20
     y: 7
   solicita:
-    itemB: 12
+    Hierro: 12
 
 - tipo: pasivo
   ubicacion:
     x: -60
     y: 36
   ofrece:
-    itemC: 8
+    Diamante: 8
 
 - tipo: buffer
   ubicacion:
     x: 35
     y: 20
   ofrece:
-    itemA: 7
+    Esmeralda: 7
   solicita:
-    itemB: 8
+    Hierro: 8
 
 - tipo: activo
   ubicacion:
     x: -20
     y: 40
   ofrece:
-    itemB: 20
+    Hierro: 20
 
 - tipo: almacenamiento
   ubicacion:
@@ -99,20 +85,20 @@ cofres:
     x: 40
     y: -60
   solicita:
-    itemB: 12
+    Hierro: 12
 
 - tipo: buffer
   ubicacion:
     x: 100
     y: -40
   ofrece:
-    itemB: 7
+    Hierro: 7
   solicita:
-    itemA: 2
+    Esmeralda: 2
     
 - tipo: activo
   ubicacion:
     x: 73
     y: -30
   ofrece:
-    itemA: 7
+    Esmeralda: 7

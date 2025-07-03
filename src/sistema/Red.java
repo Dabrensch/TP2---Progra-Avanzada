@@ -248,24 +248,23 @@ public class Red {
 			
 			Printer.oferta(ofrecido);
 			Printer.info("Se buscará un cofre cercano que solicite " + ofrecido.getItem());
-			solicitados.sort(Comparator
-					.comparing(pedido -> pedido.getCofre().getUbicacion().distanciaA(cofreOfrecido.getUbicacion())));
-			
-			// Esta linea busca el cofre solicitud mas cercano para atender la oferta de items del cofreOfrecido.
 
+			solicitados.sort(Comparator.comparing(pedido -> pedido.getCofre().getUbicacion().distanciaA(cofreOfrecido.getUbicacion())));
+
+			
 			for (Pedido solicitado : solicitados) {
 				
 				// recorrer las solicitudes en busca de un cofre que solicite el item del pedido
-				if (solicitado.getItem().equals(item) == true && solicitado.getCantidad() != 0) {
+				if (solicitado.getItem().equals(item) && solicitado.getCantidad() != 0) {
 					Printer.solicitud(solicitado);
 					Cofre cofreSolicitado = solicitado.getCofre();
 					int cantidad = 0;
 
 					if (robots.isEmpty()) {
-						Printer.advertencia("No hay robots disponibles.");
+						Printer.advertencia("No hay robots disponibles para atender los pedidos.");
 						break;
 					}
-
+					
 					while (true) {
 						
 						Ruta ruta = planearRuta(cofreOfrecido, cofreSolicitado);
@@ -295,9 +294,6 @@ public class Red {
 							break;
 					}
 
-					// VER QUE FALTA LLEVAR
-					// tambien hay que cambiar los vectores de ofrece, solicita y inventario de cada
-					// cofre
 					if (solicitado.getCantidad() - cantidad == 0) {
 
 						solicitado.setCantidad(0); // ya no hay solicitados
@@ -315,7 +311,7 @@ public class Red {
 																						// iterando
 						}
 					} else if (ofrecido.getCantidad() - cantidad == 0) {
-						Printer.info("El cofre no tiene mas "+ ofrecido.getItem() +" para ofrecer, pero hay otros cofres que siguen esperando "+ ofrecido.getItem()  +".");
+						Printer.info("El " + ofrecido.getCofre().getTipo() + " no tiene mas "+ ofrecido.getItem() +" para ofrecer, pero hay cofres que siguen esperando "+ ofrecido.getItem()  +".");
 						ofrecido.setCantidad(0);
 						solicitado.setCantidad(solicitado.getCantidad() - cantidad); // se ofrecieron todos los
 																						// items
@@ -325,7 +321,9 @@ public class Red {
 				}
 
 			}
-			
+			if(robots.isEmpty()) 
+				break;
+			//Podemos haber llegado hasta aca sin robots y entrariamos siempre al if de abajo, por lo que preguntamos nuevamente por los robots
 			if (ofrecido.getCantidad() != 0) {				
 				if (cofreOfrecido.esActivo()) {
 					if(entregoAlgo) 

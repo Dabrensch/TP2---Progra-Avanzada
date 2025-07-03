@@ -9,8 +9,8 @@ public class Main {
 
 	public static void main(String[] args) throws FileNotFoundException {
 		
-//		PrintStream archivoSalida = new PrintStream("salida.txt");
-//		System.setOut(archivoSalida);
+		PrintStream archivoSalida = new PrintStream("salida.txt");
+		System.setOut(archivoSalida);
 		
 		Colonia colonia = new Colonia();
 		try {

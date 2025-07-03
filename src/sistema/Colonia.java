@@ -141,12 +141,12 @@ public class Colonia {
 	}
 
 	public void iniciarSimulacion() {
-		System.out.println("************************ EMPIEZA LA SIMULACION! ************************\n");
+		System.out.println("************************ EMPIEZA LA SIMULACIÓN! ************************\n");
 		Printer.mostrarColonia(this);
 		for (Red red : redes) {
 			System.out.print("\n------------ La red " + red.getId() + " va a atender los pedidos ------------");
 			int costo = red.atenderPedidos();
-			System.out.println("\n------------ La red " + red.getId() + " termino de atender los pedidos ------------");
+			System.out.println("\n\n------------ La red " + red.getId() + " terminó de atender los pedidos ------------\n\n");
 			if (costo == -1) {
 				Printer.advertencia("La red " + red.getId() + " no tiene solucion. ");
 				redesSinSolucion.add(red);
@@ -158,15 +158,14 @@ public class Colonia {
 			// + 1 por dejar algo en un cofre
 		}
 		
-		System.out.println("\n\n************************ TERMINO LA SIMULACION! ************************");
+		System.out.println("\n\n************************ TERMINO LA SIMULACIÓN! ************************");
 
 		boolean hayCofresNoAsignadosCriticos = !cofresCriticos.isEmpty();
 		
 		if (hayCofresNoAsignadosCriticos || !redesSinSolucion.isEmpty())
-			System.out.println("\nEl sistema no tiene solución: ");
+			Printer.advertencia("El sistema no tiene solución");
 		else
-			System.out.println("\nEl sistema tiene solución! Todas las redes completaron los pedidos y no hay cofres fuera de cobertura.");
-
+			Printer.info("El sistema tiene solución! Todas las redes completaron los pedidos y no hay cofres fuera de cobertura.");
 
 		if (hayCofresNoAsignadosCriticos) {
 			Printer.advertencia("Hay cofres criticos fuera de cobertura: ");
@@ -199,7 +198,7 @@ public class Colonia {
 			ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
 			Colonia data = mapper.readValue(
-					new File("C://Users//Fran_//Desktop//colonia_variacion_1.yaml"),
+					new File("C://Users//Fran_//Desktop//colonia_variacion_2.yaml"),
 					Colonia.class);
 			this.robopuertos = data.robopuertos;
 			this.cofres = data.cofres;
